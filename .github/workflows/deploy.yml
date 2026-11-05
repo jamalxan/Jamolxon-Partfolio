@@ -17,6 +17,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Sanity check
+        working-directory: frontend
         run: |
           test -f index.html
           for f in $(grep -oE '(src|href)="assets/[^"]+"' index.html | sed -E 's/^[a-z]+="//; s/"$//'); do
@@ -40,7 +41,7 @@ jobs:
           rsync -rlz --delete --chmod=D755,F644 \
             --exclude='.git/' --exclude='.github/' --exclude='README.md' --exclude='.idea/' \
             -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
-            ./ portfolio@185.237.97.126:/
+            ./frontend/ portfolio@185.237.97.126:/
 
       - name: Smoke test
         run: |
