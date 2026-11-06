@@ -76,12 +76,17 @@ healthy() {
   done
   return 1
 }
+# Smoke hits the new nginx container directly (independent of DNS, Cloudflare and Caddy).
 smoke() {
-  local base="https://$HOST"
-  curl -fsS -m 15 -o /dev/null "$base/" &&
-  curl -fsS -m 15 "$base/api/v1/ready" | grep -q '"ok"' &&
-  curl -fsS -m 15 -o /dev/null "$base/loyihalar/" &&
-  curl -fsS -m 15 -o /dev/null "$base/sitemap.xml"
+  local ip c
+  ip="$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' "$PROJECT-nginx" | awk '{print $1}')"
+  [ -n "$ip" ] || return 1
+  c() { curl -fsS -m 15 -H "Host: $HOST" -H "X-Forwarded-Proto: https" "$@"; }
+  for _ in $(seq 30); do c -o /dev/null "http://$ip/" 2>/dev/null && break; sleep 2; done  # first site build
+  c -o /dev/null "http://$ip/" &&
+  c "http://$ip/api/v1/ready" | grep -q '"ok"' &&
+  c -o /dev/null "http://$ip/loyihalar/" &&
+  c -o /dev/null "http://$ip/sitemap.xml"
 }
 
 if healthy && sleep 8 && smoke; then

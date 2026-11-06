@@ -34,7 +34,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends libjpeg62-turbo
     && rm -rf /var/lib/apt/lists/* \
     && groupadd --system --gid 10001 app && useradd --system --uid 10001 --gid app --home /app app
 ENV PATH=/opt/venv/bin:$PATH PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
-    FRONTEND_DIST=/app/frontend_dist SITE_OUT_DIR=/srv/site MEDIA_DIR=/srv/media
+    FRONTEND_DIST=/app/frontend_dist SITE_OUT_DIR=/srv/site/current MEDIA_DIR=/srv/media
 WORKDIR /app
 COPY --from=pydeps /opt/venv /opt/venv
 COPY backend/ ./
