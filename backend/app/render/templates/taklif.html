@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_macros.html" import crumbs with context %}
+{% block head_extra %}{% if turnstile_site_key %}<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{% endif %}{% endblock %}
+{% block main %}<section class="sec" data-theme="yellow"><div class="wrap tak" style="padding-top:0">
+    <div>{{ crumbs([('Bosh sahifa', '/'), ('Taklif', None)]) }}
+      <h1>Loyiha taklif <span class="outl">qiling</span></h1>
+      <p class="lede">Qisqacha yozing: soha, muammo, kutayotgan natija. Texnik tilda bo'lishi shart emas — men tarjima qilaman. 24 soat ichida javob beraman.</p>
+      <div class="tak__how">
+        <div><i>1</i><div><b>Formani to'ldirasiz</b>yoki Telegram'da yozasiz — qaysi qulay bo'lsa.</div></div>
+        <div><i>2</i><div><b>Men tahlil qilaman</b>muammo, mavjud tizimlar, AI qayerda foyda beradi.</div></div>
+        <div><i>3</i><div><b>Taklif olasiz</b>yechim varianti, bosqichlar, muddat va narx oralig'i.</div></div>
+      </div>
+      <div class="tak__ch" id="channels">
+        <a href="{{ CONTACT.tgUrl }}" target="_blank" rel="noopener"><span>@{{ CONTACT.tg }}</span><small>Telegram</small></a>
+        <a href="{{ CONTACT.ghUrl }}" target="_blank" rel="noopener"><span>{{ CONTACT.gh }}</span><small>GitHub</small></a>
+        <a href="{{ CONTACT.igUrl }}" target="_blank" rel="noopener"><span>{{ CONTACT.ig }}</span><small>Instagram</small></a>
+        <a href="#" data-mail><span>email</span><small>Email</small></a>
+        <a href="#" data-tel><span>telefon</span><small>Telefon</small></a>
+      </div>
+    </div>
+    <form class="form" id="takform" method="post" action="/api/v1/leads" novalidate>
+      <h2>Taklif formasi</h2>
+      <div class="row"><label><span>Ismingiz <em>*</em></span><input name="name" required minlength="2" maxlength="80" autocomplete="name" placeholder="Ism Familiya"></label><label><span>Nima kerak <em>*</em></span><select name="service" required>{% for x in SERVICES %}<option value="{{ x.slug }}">{{ x.title }}</option>{% endfor %}<option value="boshqa">Boshqa / aniq emas</option></select></label></div>
+      <label><span>Loyiha haqida <em>*</em></span><textarea name="message" required minlength="10" maxlength="4000" placeholder="Qanday muammo bor? Hozir qanday hal qilinadi? Qanday natija kutyapsiz? Mavjud tizimlar (CRM, sayt, bot)?"></textarea></label>
+      <div class="row"><label>Byudjet oralig'i<select name="budget_range"><option value="aniq_emas">Hali aniq emas</option><option value="&lt;500">$500 gacha</option><option value="500-1000">$500 — $1 000</option><option value="1000-3000">$1 000 — $3 000</option><option value="3000-10000">$3 000 — $10 000</option><option value="10000+">$10 000+</option></select></label><label>Muddat<select name="deadline"><option value="aniq_emas">Aniq emas</option><option value="shoshilinch">Shoshilinch</option><option value="1_oy">1 oy ichida</option><option value="3_oy">3 oy ichida</option></select></label></div>
+      <fieldset><legend>Qaysi yo'l bilan bog'lanay? <em>*</em></legend><div class="radios"><label><input type="radio" name="contact_type" value="telegram" checked>Telegram</label><label><input type="radio" name="contact_type" value="email">Email</label><label><input type="radio" name="contact_type" value="phone">Telefon</label></div></fieldset>
+      <label><span>Aloqa ma'lumoti <em>*</em></span><input name="contact_value" required maxlength="120" autocomplete="off" placeholder="@username, siz@kompaniya.uz yoki +998 90 000 00 00"></label>
+      <label class="consent"><input type="checkbox" name="consent" value="true" required><span>Ma'lumotlarimni taklifni ko'rib chiqish uchun qayta ishlashga roziman <em>*</em></span></label>
+      <div class="hp" aria-hidden="true"><label>Veb-sayt<input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <input type="hidden" name="elapsed_ms" value="">
+      <input type="hidden" name="source_page" value="/taklif/">
+      {% if turnstile_site_key %}<div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}" data-theme="dark" data-language="uz"></div>{% endif %}
+      <div class="actions"><button class="btn btn-y" type="submit">{{ ICON.send }} Yuborish</button><span class="err" id="takerr" role="alert"></span></div>
+      <div class="out" id="takout" role="status"></div>    </form>
+  </div></section>{% endblock %}

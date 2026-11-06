@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "_macros.html" import crumbs, cat_badge, figure with context %}
+{% block main %}<section class="sec" data-theme="{{ 'red' if p.cat == 'sale' else 'maroon' }}"><div class="wrap">
+    {{ crumbs([('Bosh sahifa', '/'), ('Loyihalar', '/loyihalar/'), (p.title, None)]) }}
+    <div class="pd__hero" style="padding-top:0">
+      <div><div>{{ cat_badge(p.cat) }}</div><h1>{{ p.title }}</h1><div class="tl">{{ p.tagline }}</div>
+        <div class="pd__meta">{% if p.year %}<span class="chip">{{ p.year }}</span>{% endif %}<span class="chip">{{ CATS[p.cat].label }}</span><span class="chip">Rolim: {{ p.role }}</span></div>
+        <div class="pd__links">{% for l in p.links %}<a class="btn btn-y" href="{{ l.url }}" target="_blank" rel="noopener">{{ l.label }} ↗</a>{% endfor %}<a class="btn btn-o" href="{{ url.taklif_offer('sale:' ~ p.slug) if p.cat == 'sale' else url.taklif }}" data-offer="{{ 'sale:' ~ p.slug if p.cat == 'sale' else '' }}">{{ "Shu yechimni so'rash" if p.cat == 'sale' else "Shunga o'xshash loyiha kerak" }}</a></div>
+      </div>
+      <div class="pd__fig rv">{{ figure(p, index) }}</div>
+    </div>
+    <div class="pd__body">
+      <div>{% for s in p.sections %}<div class="pd__sec rv"><h3>{{ s.h }}</h3>{% for t in s.p %}<p>{{ t }}</p>{% endfor %}</div>{% endfor %}
+        <div class="pd__sec rv"><h3>Shunga o'xshash tizim kerakmi?</h3><p>Shu loyihadagi yadro — {{ p.stack[:3]|join(', ') }} — sizning sohangizga ham moslashadi. Muammoni yozing, 24 soat ichida yechim taklifini qaytaraman.</p><a class="btn btn-y" href="/taklif/">{{ ICON.send }} Taklif yozish</a></div>
+      </div>
+      <aside class="pd__side">
+        <div class="pd__box"><b>Texnologiyalar</b><div class="stack">{% for s in p.stack %}<span>{{ s }}</span>{% endfor %}</div></div>
+        <div class="pd__box res"><b>Natija</b><ul>{% for r in p.results %}<li>— {{ r }}</li>{% endfor %}</ul></div>
+        <div class="pd__box"><b>Rolim</b><p>{{ p.role }}</p></div>
+      </aside>
+    </div>
+    <div class="pd__nav"><a href="{{ url.project(prev.slug) }}"><small>← Oldingi</small><b>{{ prev.title }}</b></a><a class="next" href="{{ url.project(next.slug) }}"><small>Keyingi →</small><b>{{ next.title }}</b></a></div>
+  </div></section>{% endblock %}

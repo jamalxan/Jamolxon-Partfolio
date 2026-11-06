@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% from "_macros.html" import shead, crumbs, cat_badge, pcard with context %}
+{% block main %}<section class="sec" data-theme="yellow" style="padding-top:120px"><div class="wrap">
+    {{ crumbs([('Bosh sahifa', '/'), ('Loyihalar', None)]) }}
+    {{ shead('Loyihalar', "Barcha ishlar — <span class=\"outl\">toifalar bo'yicha</span>", "Har toifa nima ekanini aniq yozdim: real ishlayotgan tizimni konsept bilan aralashtirmayman.", tag='h1') }}
+    {% for c, cat in CATS.items() %}{% set list = PROJECTS|selectattr('cat', 'equalto', c)|list %}<div class="pgroup" id="cat-{{ c }}"><div class="pgroup__h">{{ cat_badge(c) }}<h3>{{ cat.label }}</h3><p>{{ cat.desc }}</p></div><div class="pgrid">{% for p in list %}{{ pcard(p, loop.index0) }}{% endfor %}</div></div>{% endfor %}
+  </div></section>{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% from "_macros.html" import shead, svc_card, offer_card, pcard, post_card with context %}
+{% block main %}
+<section class="sec hero" data-theme="maroon" id="top">
+  <div class="hero__giant" aria-hidden="true">JAMOLXON</div>
+  <canvas id="badge" tabindex="0" aria-label="Ipga osilgan shaxsiy beyjik. Sichqoncha yoki barmoq bilan sudrang; Enter yoki Probel bosilsa tebranadi."></canvas>
+  <div class="hero__txt">
+    <div class="hero__tag rv"><i></i>Python Backend Developer · AI Solutions</div>
+    <h1><span class="l"><span>Backend quraman.</span></span><span class="l"><span><em>AI</em> bilan biznes</span></span><span class="l"><span>muammolarini yechaman.</span></span></h1>
+    <p class="lede rv">Men Jamolxon — Python backend dasturchi va Promtchi asoschisi. Web saytlar, Telegram botlar, CRM/ERP tizimlar, integratsiyalar, web dizayn va AI agentlar — g'oyadan ishga tushirishgacha, bitta jamoada.</p>
+    <div class="hero__cta rv"><a class="btn btn-y" href="/taklif/">{{ ICON.send }} Loyiha taklif qilish</a><a class="btn btn-o" href="/#xizmatlar"><span>Xizmatlar<span class="hide-sm">ni ko'rish</span></span></a></div>
+  </div>
+  <div class="hero__stage" id="stage">
+    <img class="hero__badgeph" src="/assets/img/portrait.jpg" width="480" height="672" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
+    <div class="hero__hint" aria-hidden="true"><i></i>beyjikni sudrang ↕</div>
+  </div>
+  <div class="hero__facts">{% for f in FACTS %}<div class="rv"><b data-count="{{ f.n }}" data-suffix="{{ f.suf }}">{{ f.n }}{{ f.suf }}</b><span>{{ f.t }}</span></div>{% endfor %}</div>
+</section>
+<div class="mqwrap" aria-hidden="true"><div class="mq"><div class="mq__t">{% for _ in range(2) %}{% for x in MQ1 %}<span>{{ x }}</span>{% endfor %}{% endfor %}</div></div></div>
+
+<section class="sec" data-theme="red" id="xizmatlar">
+  <div class="wrap">
+    {{ shead('01 · Xizmatlar', 'Nima <span class="outl">quraman</span>', "Olti yo'nalish — har biri alohida: nima kiradi, kimga, qanday ishlaymiz, misollar. Kartani oching.") }}
+    <div class="svcs">{% for sv in SERVICES %}{{ svc_card(sv, loop.index0) }}{% endfor %}</div>
+  </div>
+</section>
+
+<section class="sec" data-theme="maroon" id="yechimlar">
+  <div class="wrap">
+    {{ shead('02 · AI sohalarda', 'AI sizning sohangizda <span class="acc">nima beradi</span>', "Xizmatlar umumiy; bu yerda — aniq misollar: soha → muammo → AI yechim → ishlayotgan loyiha. «Shu yechim kerak» ni bossangiz, forma tayyor bo'ladi.") }}
+    <div class="offers">{% for o in OFFERS %}{{ offer_card(o, loop.index0) }}{% endfor %}</div>
+    <div class="offers__cta rv"><p>Sohangiz ro'yxatda yo'qmi? Muammoni yozing — 24 soat ichida AI yechim taklifini qaytaraman.</p><a class="btn btn-y" href="/taklif/">Muammoni yozish {{ ICON.arrow }}</a></div>
+  </div>
+</section>
+
+<section class="sec" data-theme="yellow" id="loyihalar">
+  <div class="wrap">
+    {{ shead('03 · Loyihalar', "Ishlar — <span class=\"outl\">to'rt toifada</span>", "Real ishlayotganlar, menejer sifatida boshqarganlarim, o'zim uchun qilganlarim va sotuvdagi tayyor yechimlar. Har kartada qisqa ma'lumot, ichida — to'liq.") }}
+    <div class="tabs" id="tabs"><button class="tab on" data-f="all">Barchasi <b>{{ PROJECTS|length }}</b></button>{% for c, cat in CATS.items() %}<button class="tab" data-f="{{ c }}">{{ cat.label }} <b>{{ PROJECTS|selectattr('cat', 'equalto', c)|list|length }}</b></button>{% endfor %}</div>
+    <div class="pgrid" id="pgrid">{% for p in PROJECTS %}{{ pcard(p, loop.index0) }}{% endfor %}</div>
+    <div class="pgrid__more"><a class="btn btn-m" href="/loyihalar/">Toifalar bo'yicha katalog {{ ICON.arrow }}</a></div>
+  </div>
+</section>
+
+<section class="sec" data-theme="maroon" id="jarayon">
+  <div class="wrap">
+    {{ shead('04 · Jarayon', 'Bu odam bilan <span class="acc">ishlash qanday?</span>', "Besh bosqich. Har birining oxirida siz aniq nimadir olasiz — va'da emas, artefakt.") }}
+    <div class="steps" id="steps"><div class="bar" id="stepbar"></div>{% for s in STEPS %}<div class="step rv"><div class="n">{{ loop.index }}</div><h3>{{ s.h }}</h3><p>{{ s.d }}</p><div class="get"><b>Siz olasiz</b>{{ s['get'] }}</div></div>{% endfor %}</div>
+  </div>
+</section>
+
+<section class="sec" data-theme="cream" id="blog">
+  <div class="wrap">
+    {{ shead('05 · Blog', 'Tajribadan <span class="outl-acc">yozuvlar</span>', 'AI, backend va avtomatlashtirish haqida — real loyihalardan olingan saboqlar.') }}
+    <div class="posts">{% for p in POSTS[:3] %}{{ post_card(p, loop.first) }}{% endfor %}</div>
+    <div class="pgrid__more"><a class="btn btn-m" href="/blog/">Barcha yozuvlar {{ ICON.arrow }}</a></div>
+  </div>
+</section>
+
+<section class="sec" data-theme="red" id="taklif-cta">
+  <div class="wrap band">
+    <div><h2>Loyiha bormi? <span class="outl">Yozing.</span></h2><p class="lede">Telegram, email yoki telefon — qaysi biri qulay bo'lsa. Yoki shu yerda formani to'ldiring: 24 soat ichida javob beraman.</p><div class="hero__cta" style="margin-top:30px"><a class="btn btn-y" href="/taklif/">{{ ICON.send }} Taklif yozish</a><a class="btn btn-o" href="{{ CONTACT.tgUrl }}" target="_blank" rel="noopener">Telegram @{{ CONTACT.tg }}</a></div></div>
+    <div class="band__box rv"><b>Birinchi suhbatdan keyin siz olasiz</b><ul>
+      <li><i>{{ ICON.check }}</i>Muammoning texnik tahlili va AI yechim varianti</li>
+      <li><i>{{ ICON.check }}</i>MVP chegarasi: nima birinchi, nima keyin</li>
+      <li><i>{{ ICON.check }}</i>Bosqichlar, muddat va narx oralig'i</li>
+      <li><i>{{ ICON.check }}</i>Mavjud tayyor yechim bo'lsa — demo havolasi</li></ul></div>
+  </div>
+</section>
+<div class="mqwrap" aria-hidden="true"><div class="mq red"><div class="mq__t">{% for _ in range(2) %}{% for x in MQ2 %}<span>{{ x }}</span>{% endfor %}{% endfor %}</div></div></div>
+{% endblock %}

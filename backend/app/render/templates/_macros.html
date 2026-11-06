@@ -1,0 +1,28 @@
+{#- Port of the helpers in frontend/assets/js/templates.js (pcard, shead, offerCard, postCard, svcCard, crumbs, catBadge, figure). -#}
+{% macro cat_badge(c) %}<span class="badge {{ CATS[c].badge }}"><i></i>{{ CATS[c].dot }}</span>{% endmacro %}
+
+{% macro figure(p, i) %}{% if p.image %}<img src="{{ p.image }}" alt="{{ p.title }}" loading="lazy" style="width:100%;height:100%;object-fit:cover">{% else %}{{ illo(p.illo, illo_theme(i)) }}{% endif %}{% endmacro %}
+
+{% macro pcard(p, i, wide=False) %}<a class="pcard rv {{ 'wide' if wide else '' }}" href="{{ url.project(p.slug) }}" data-cat="{{ p.cat }}">
+    <div class="fig">{{ figure(p, i) }}{{ cat_badge(p.cat) }}</div>
+    <div class="body"><div class="tl">{{ p.tagline }}</div><h3>{{ p.title }}</h3><p>{{ p.summary }}</p>
+      <div class="stack">{% for s in p.stack[:4] %}<span>{{ s }}</span>{% endfor %}</div>
+      <div class="more">Batafsil {{ ICON.arrow }}</div></div></a>{% endmacro %}
+
+{#- h and lede are trusted template literals (may contain markup), exactly like shead() in JS. tag="h1" for pages whose only heading is the section head. -#}
+{% macro shead(idx, h, lede='', center=False, tag='h2') %}<div class="shead {{ 'center' if center else '' }}"><span class="idx">{{ idx }}</span><{{ tag }}>{{ h|safe }}</{{ tag }}>{% if lede %}<p class="lede">{{ lede|safe }}</p>{% endif %}</div>{% endmacro %}
+
+{% macro offer_card(o, i) %}<article class="offer rv"><div class="big">{{ '%02d' % (i + 1) }}</div><div class="ic">{{ ICON.get(o.icon) or ICON.chat }}</div><h3>{{ o.title }}</h3>
+    <dl><div><dt>Muammo</dt><dd>{{ o.problem }}</dd></div><div><dt>AI yechim</dt><dd>{{ o.solution }}</dd></div></dl>
+    <div class="ex">Misol: {% for t, s in o.example %}<a href="{{ url.project(s) }}">{{ t }}</a>{% if not loop.last %} {% endif %}{% endfor %}</div>
+    <a class="btn btn-y btn-sm" href="{{ url.taklif_offer(o.key) }}" data-offer="{{ o.key }}">Shu yechim kerak {{ ICON.arrow }}</a></article>{% endmacro %}
+
+{% macro post_card(p, feat=False) %}<a class="post rv {{ 'feat' if feat else '' }}" href="{{ url.post(p.slug) }}"><div class="meta"><span>{{ fmt_date(p.date) }}</span><i></i><span>{{ p.read }}</span></div><h3>{{ p.title }}</h3><p>{{ p.excerpt }}</p><div class="tags">{% for t in p.tags %}<span>{{ t }}</span>{% endfor %}</div></a>{% endmacro %}
+
+{% macro crumbs(items) %}<nav class="crumbs" aria-label="Yo'l">{% for label, href in items %}{% if href %}<a href="{{ href }}">{{ label }}</a>{% if not loop.last %}<span>/</span>{% endif %}{% else %}<strong>{{ label }}</strong>{% endif %}{% endfor %}</nav>{% endmacro %}
+
+{% macro svc_card(sv, i) %}<a class="svc rv" href="{{ url.service(sv.slug) }}"><div class="svc__top"><span class="svc__n">{{ '%02d' % (i + 1) }}</span><span class="svc__ic">{{ ICON.get(sv.icon) or ICON.site }}</span></div>
+    <h3>{{ sv.title }}</h3><p>{{ sv.short }}</p>
+    <ul>{% for x in sv.includes[:3] %}<li>{{ x }}</li>{% endfor %}</ul>
+    <div class="svc__ex">{% for sl in sv.examples %}{% set pr = project_by_slug.get(sl) %}{% if pr %}<span>{{ pr.title }}</span>{% endif %}{% endfor %}</div>
+    <div class="more">Batafsil va misollar {{ ICON.arrow }}</div></a>{% endmacro %}

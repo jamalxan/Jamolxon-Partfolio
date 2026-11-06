@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% from "_macros.html" import shead, crumbs, post_card with context %}
+{% block main %}<section class="sec" data-theme="cream" style="padding-top:120px"><div class="wrap">
+    {{ crumbs([('Bosh sahifa', '/'), ('Blog', '/blog/' if page_no > 1 else None)] + ([(page_no ~ '-sahifa', None)] if page_no > 1 else [])) }}
+    {{ shead('Blog', 'Tajribadan <span class="outl-acc">yozuvlar</span>', "Real loyihalardan: nima ishladi, nima ishlamadi, qanday qilib to'g'riladim.", tag='h1') }}
+    <div class="posts">{% for p in posts %}{{ post_card(p, loop.first and page_no == 1) }}{% endfor %}</div>
+    {% if page_count > 1 %}<nav class="pgrid__more blog__pages" aria-label="Sahifalar">{% if page_no > 1 %}<a class="btn btn-m" href="{{ url.blog_page(page_no - 1) }}" rel="prev">← Oldingi sahifa</a>{% endif %}<span class="blog__pageno">{{ page_no }} / {{ page_count }}</span>{% if page_no < page_count %}<a class="btn btn-m" href="{{ url.blog_page(page_no + 1) }}" rel="next">Keyingi sahifa →</a>{% endif %}</nav>{% endif %}
+  </div></section>{% endblock %}

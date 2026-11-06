@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% from "_macros.html" import crumbs with context %}
+{% block main %}<section class="sec" data-theme="cream"><div class="article" style="padding-top:0">
+    {{ crumbs([('Bosh sahifa', '/'), ('Blog', '/blog/'), (p.title, None)]) }}
+    <div>{% for t in p.tags %}<span class="chip">{{ t }}</span> {% endfor %}</div>
+    <h1>{{ p.title }}</h1><div class="meta"><span>Jamolxon</span><i></i><span>{{ fmt_date(p.date) }}</span><i></i><span>{{ p.read }}</span></div>
+    {{ body }}
+    <div class="cta"><p>Keyingi yozuv: {{ next.title }}</p><a class="btn btn-y" href="{{ url.post(next.slug) }}">O'qish {{ ICON.arrow }}</a></div>
+  </div></section>{% endblock %}
