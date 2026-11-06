@@ -68,12 +68,16 @@ jobs:
       - name: Functional smoke (Playwright)
         working-directory: frontend
         run: npx playwright install --with-deps chromium && node tests/visual/smoke.mjs .site
+      - name: Responsive audit (15 phone/tablet viewports x 8 pages, no overflow or cut-off content)
+        working-directory: frontend
+        run: node tests/visual/responsive.mjs .site --shots responsive-shots
       - name: Lighthouse CI (budgets fail the build)
         working-directory: frontend
         run: npx --yes @lhci/cli@0.14.x autorun --config=../.lighthouserc.json
       - uses: actions/upload-artifact@v4
         if: always()
-        with: { name: site, path: frontend/.site, retention-days: 7 }
+        with: { name: site, path: "frontend/.site
+frontend/responsive-shots", retention-days: 7 }
 
   admin:
     runs-on: ubuntu-24.04

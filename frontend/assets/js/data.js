@@ -142,18 +142,6 @@ const PROJECTS = [
    results:["3 tilda AI FAQ","/knowledge bilan jonli yangilanadigan bilim bazasi"],
    links:[]},
 
-  {slug:'jamolxon-uz', cat:'own', title:'jamolxon.uz', year:'2025',
-   tagline:"Shu sayt: zarracha-avatar, skroll animatsiya, blog va taklif formasi",
-   summary:"Hozir ko'rib turgan saytingiz. Three.js zarrachalardan yig'ilgan portret, GSAP skroll animatsiyalari, loyihalar katalogi, blog va taklif formasi — freymvorksiz, bitta fayl.",
-   illo:'portfolio', image:null, stack:['Three.js','GSAP ScrollTrigger','Vanilla JS','SVG'],
-   role:"To'liq",
-   sections:[
-     {h:'Nega bunday', p:["Portfolio sayt — dasturchining eng halol namunasi: u qanday ishlasa, mijozning loyihasi ham shunday ishlaydi. Shuning uchun u tez, aniq tuzilgan va biroz quvnoq bo'lishi kerak edi."]},
-     {h:'Texnik tomoni', p:["Zarracha-avatar: Three.js Points + maxsus shader, sichqonchaga qaraydi, skrollda sochiladi. GSAP ScrollTrigger bilan bo'limlar animatsiyasi. Hash-router bilan ichki sahifalar (loyihalar, blog, taklif) — bitta HTML fayl, server kerak emas. prefers-reduced-motion hurmat qilinadi."]}
-   ],
-   results:["Bitta fayl, freymvorksiz","Zarracha-avatar + skroll animatsiya"],
-   links:[]},
-
   /* ---------------- SALE ---------------- */
   {slug:'appleshop', cat:'sale', title:"Onlayn do'kon (AppleShop)", year:'2024',
    tagline:'Rang va xotira variantlari bilan e-commerce + admin panel',
@@ -314,7 +302,7 @@ const SERVICES = [
    who:["Yangi biznes — birinchi sayt kerak","Eski sayti sekin yoki telefonda buzilib ko'rinadigan kompaniyalar","Mahsulot yoki xizmat uchun landing kerak bo'lganlar"],
    includes:["Tuzilma va matn rejasi (nima qaysi sahifada)","Dizayn: mobil va desktop uchun alohida kompozitsiya","Qurish: HTML/CSS/JS yoki Next.js — loyihaga qarab","SEO asoslari: title/description, schema.org, OG rasm, sitemap","Tezlik: mobil LCP 2.5 s dan kam, rasm optimizatsiyasi","Domen, SSL, deploy (AWS Lightsail / Vercel / Cloudflare) va monitoring","Aloqa formasi → Telegram'ga bildirishnoma"],
    process:["Suhbat: maqsad, auditoriya, raqobatchilar","Tuzilma va matn — tasdiqlaysiz","Dizayn maketi — tasdiqlaysiz","Qurish, test (telefon, planshet, desktop), deploy"],
-   examples:['promtchi-uz','jamolxon-uz'], stack:['HTML/CSS/JS','Next.js','Tailwind','GSAP','AWS Lightsail','Vercel','Cloudflare'],
+   examples:['promtchi-uz'], stack:['HTML/CSS/JS','Next.js','Tailwind','GSAP','AWS Lightsail','Vercel','Cloudflare'],
    timeline:"Landing — 1–2 hafta. Ko'p sahifali sayt — 3–5 hafta.",
    faq:[["Matnni kim yozadi?","Tuzilmani men beraman; matnni siz berasiz yoki birga yozamiz."],["Keyin o'zim tahrirlay olamanmi?","Ha — kontent qismi uchun oddiy admin yoki fayl orqali tahrirlash beriladi; qanday bo'lishini boshida kelishamiz."]]},
 

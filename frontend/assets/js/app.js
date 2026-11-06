@@ -250,12 +250,16 @@ function fitGiants(){document.querySelectorAll('.foot .giant,.hero__giant').forE
   const parent=el.parentElement, ps=getComputedStyle(parent);
   const avail=parent.clientWidth-parseFloat(ps.paddingLeft)-parseFloat(ps.paddingRight);
   if(avail<50) return;
-  el.style.fontSize='100px'; // o'lchash uchun ma'lum o'lcham
-  const spans=el.querySelectorAll('span');
-  const w=spans.length?[...spans].reduce((a,sp)=>a+sp.offsetWidth,0):el.scrollWidth; // transform'larga bog'liq emas
+  // o'lchov alohida yashirin nusxada: footer layout'i o'zgarmaydi (ResizeObserver tebranmaydi), flex siqmaydi
+  const cs=getComputedStyle(el), m=document.createElement('span');
+  m.textContent=el.textContent.trim();
+  m.style.cssText=`position:absolute;left:-9999px;top:0;visibility:hidden;white-space:nowrap;font-family:${cs.fontFamily};font-weight:${cs.fontWeight};letter-spacing:-.05em;font-size:100px`;
+  if(el.classList.contains('hero__giant')) m.style.letterSpacing='-.06em';
+  document.body.appendChild(m); const w=m.getBoundingClientRect().width; m.remove();
   if(!w) return;
   const max=el.classList.contains('giant')?260:320;
-  el.style.fontSize=Math.min(max,Math.floor(100*avail/w*0.97))+'px';
+  const size=Math.min(max,Math.floor(100*avail/w*0.97))+'px';
+  if(el.style.fontSize!==size) el.style.fontSize=size;
 })}
 addEventListener('resize',fitGiants); addEventListener('load',fitGiants);
 if(document.fonts){document.fonts.ready.then(fitGiants);document.fonts.addEventListener('loadingdone',fitGiants);document.fonts.load('900 100px Unbounded').then(fitGiants).catch(()=>{})}

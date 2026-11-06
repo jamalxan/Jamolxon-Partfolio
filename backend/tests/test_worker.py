@@ -38,7 +38,7 @@ async def test_rebuild_writes_site_and_is_debounced(seeded: None, tmp_path: Path
     monkeypatch.setattr(get_settings(), "frontend_dist", None)
     c = ctx()
     n = await worker.rebuild_site_job(c)
-    assert n >= 29
+    assert n >= 28
     assert (out / "index.html").exists() and (out / "loyihalar" / "socialauto" / "index.html").exists()
     assert "Jamolxon" in (out / "index.html").read_text(encoding="utf-8")
     from app.core.redis import get_redis

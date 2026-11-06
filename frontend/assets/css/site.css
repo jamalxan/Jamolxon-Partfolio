@@ -35,3 +35,37 @@
 
 /* loyiha/xizmat bo'limlari: h1 -> h2 tartibi (a11y), ko'rinishi avvalgi h3 bilan bir xil */
 .pd__sec h2{font-size:clamp(22px,2.2vw,34px);line-height:1.08;margin-bottom:14px}
+
+/* ============================================================
+   Responsive tuzatishlar (320–1366px, telefon/planshet, portret/landshaft).
+   Ko'rinish tili o'zgarmaydi: faqat sig'ish, o'ralish va bosish maydonlari.
+   ============================================================ */
+
+/* mobil brauzer matnni o'zicha kattalashtirmasin (iOS landshaft, Android font boosting) */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+
+/* grid ustunlari ichidagi uzun so'z/teglar ustunni ekrandan kengaytirmasin */
+.hero>*,.band>*,.tak>*,.pd__hero>*,.pd__body>*,.shead>*{min-width:0}
+.hero__tag{max-width:100%;align-items:baseline}.hero__tag i{flex:none;align-self:center}
+.foot__sub>span:first-of-type{white-space:nowrap}
+h1,h2,h3,.pd__nav b{overflow-wrap:break-word}
+
+/* oldingi/keyingi kartalar: teng ustunlar, tor ekranda ustma-ust */
+.pd__nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:480px){.pd__nav{grid-template-columns:1fr}.pd__nav a.next{text-align:left}}
+
+/* eng tor telefonlar (≤380px): CTA tugmalari sig'masa keyingi qatorga o'tadi */
+@media(max-width:380px){
+  .hero__cta{flex-wrap:wrap}
+  .hero__cta .btn{padding:13px 14px;font-size:13px}
+  .hero__tag{font-size:11.5px;gap:8px}
+  .pd__links .btn,.hero__cta .btn{max-width:100%;white-space:normal;line-height:1.2}
+}
+
+/* sensorli ekranlar: bosish maydoni ≥44px (WCAG 2.5.8), ko'rinish o'zgarmaydi */
+@media(pointer:coarse){
+  .btn{min-height:44px}
+  .nav .mark{padding-block:7px;margin-block:-7px}
+  .foot a,.crumbs a,.pd__body .pd__box a,.ex a{display:inline-block;padding-block:10px;margin-block:-10px}
+  .faq summary{min-height:44px;display:flex;align-items:center}
+}

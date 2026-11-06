@@ -70,7 +70,7 @@ def parse(f: Path) -> Doc:
 # ------------------------------------------------------------------ structure
 def test_all_pages_exist(site: tuple[Path, list[str]], seed_content: dict[str, Any]) -> None:
     out, paths = site
-    assert len(seed_content["PROJECTS"]) == 14 and len(seed_content["SERVICES"]) == 6 and len(seed_content["POSTS"]) == 4
+    assert len(seed_content["PROJECTS"]) == 13 and len(seed_content["SERVICES"]) == 6 and len(seed_content["POSTS"]) == 4
     for p in seed_content["PROJECTS"]:
         assert (out / "loyihalar" / p["slug"] / "index.html").is_file()
     for s in seed_content["SERVICES"]:
@@ -80,7 +80,7 @@ def test_all_pages_exist(site: tuple[Path, list[str]], seed_content: dict[str, A
     for f in ("index.html", "loyihalar/index.html", "blog/index.html", "taklif/index.html", "404.html",
               "sitemap.xml", "robots.txt", "rss.xml"):
         assert (out / f).is_file(), f
-    assert len([p for p in paths if p.startswith("/loyihalar/") and p != "/loyihalar/"]) == 14
+    assert len([p for p in paths if p.startswith("/loyihalar/") and p != "/loyihalar/"]) == 13
     assert len([p for p in paths if p.startswith("/xizmatlar/")]) == 6
 
 
@@ -150,7 +150,7 @@ def test_sitemap_lists_every_page(site: tuple[Path, list[str]]) -> None:
     root = ET.parse(out / "sitemap.xml").getroot()
     locs = {u.find("s:loc", ns).text: u.find("s:lastmod", ns) for u in root.findall("s:url", ns)}  # type: ignore[union-attr]
     pages = [p for p in paths if p.endswith("/")]
-    assert len(pages) >= 1 + 1 + 14 + 6 + 1 + 4 + 1
+    assert len(pages) >= 1 + 1 + 13 + 6 + 1 + 4 + 1
     for p in pages:
         assert "https://jamolxon.uz" + p in locs, p
         assert locs["https://jamolxon.uz" + p] is not None, f"no lastmod for {p}"
@@ -273,7 +273,7 @@ def test_blog_pagination(content: dict[str, Any], tmp_path: Path) -> None:
 def test_facts_computed_from_projects(site: tuple[Path, list[str]]) -> None:
     out, _ = site
     html = (out / "index.html").read_text(encoding="utf-8")
-    assert '<b data-count="14" data-suffix="">14</b>' in html
+    assert '<b data-count="13" data-suffix="">13</b>' in html
 
 
 def test_legacy_mapping() -> None:

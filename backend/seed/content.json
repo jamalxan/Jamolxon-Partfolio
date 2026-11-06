@@ -471,42 +471,6 @@
       "links": []
     },
     {
-      "slug": "jamolxon-uz",
-      "cat": "own",
-      "title": "jamolxon.uz",
-      "year": "2025",
-      "tagline": "Shu sayt: zarracha-avatar, skroll animatsiya, blog va taklif formasi",
-      "summary": "Hozir ko'rib turgan saytingiz. Three.js zarrachalardan yig'ilgan portret, GSAP skroll animatsiyalari, loyihalar katalogi, blog va taklif formasi — freymvorksiz, bitta fayl.",
-      "illo": "portfolio",
-      "image": null,
-      "stack": [
-        "Three.js",
-        "GSAP ScrollTrigger",
-        "Vanilla JS",
-        "SVG"
-      ],
-      "role": "To'liq",
-      "sections": [
-        {
-          "h": "Nega bunday",
-          "p": [
-            "Portfolio sayt — dasturchining eng halol namunasi: u qanday ishlasa, mijozning loyihasi ham shunday ishlaydi. Shuning uchun u tez, aniq tuzilgan va biroz quvnoq bo'lishi kerak edi."
-          ]
-        },
-        {
-          "h": "Texnik tomoni",
-          "p": [
-            "Zarracha-avatar: Three.js Points + maxsus shader, sichqonchaga qaraydi, skrollda sochiladi. GSAP ScrollTrigger bilan bo'limlar animatsiyasi. Hash-router bilan ichki sahifalar (loyihalar, blog, taklif) — bitta HTML fayl, server kerak emas. prefers-reduced-motion hurmat qilinadi."
-          ]
-        }
-      ],
-      "results": [
-        "Bitta fayl, freymvorksiz",
-        "Zarracha-avatar + skroll animatsiya"
-      ],
-      "links": []
-    },
-    {
       "slug": "appleshop",
       "cat": "sale",
       "title": "Onlayn do'kon (AppleShop)",
@@ -657,8 +621,7 @@
         "Qurish, test (telefon, planshet, desktop), deploy"
       ],
       "examples": [
-        "promtchi-uz",
-        "jamolxon-uz"
+        "promtchi-uz"
       ],
       "stack": [
         "HTML/CSS/JS",

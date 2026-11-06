@@ -16,7 +16,7 @@ dev: up migrate
 
 test:
 	cd backend && uv run pytest -q --cov
-	cd frontend && npm run build && npm run render:dist && node tests/budget.mjs dist && node tests/visual/smoke.mjs .site
+	cd frontend && npm run build && npm run render:dist && node tests/budget.mjs dist && node tests/visual/smoke.mjs .site && node tests/visual/responsive.mjs .site
 	cd admin && npm test -- --run
 
 lint:

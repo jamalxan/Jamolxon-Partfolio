@@ -34,7 +34,7 @@ async def test_openapi_hidden_in_production(monkeypatch: pytest.MonkeyPatch) -> 
 async def test_public_lists_seed_content(client: AsyncClient, seeded: None) -> None:
     r = await client.get("/api/v1/projects?limit=50")
     body = r.json()
-    assert body["total"] == 14 and len(body["items"]) == 14
+    assert body["total"] == 13 and len(body["items"]) == 13
     assert r.headers["cache-control"] == "public, max-age=60, stale-while-revalidate=600"
     etag = r.headers["etag"]
     assert (await client.get("/api/v1/projects?limit=50", headers={"If-None-Match": etag})).status_code == 304
@@ -44,7 +44,7 @@ async def test_public_lists_seed_content(client: AsyncClient, seeded: None) -> N
     posts = (await client.get("/api/v1/posts")).json()
     assert posts["total"] == 4 and "body" not in posts["items"][0]
     site = (await client.get("/api/v1/site")).json()
-    assert site["facts"][0]["n"] == 14 and site["contact"]["tg"] == "jamalxon"
+    assert site["facts"][0]["n"] == 13 and site["contact"]["tg"] == "jamalxon"
 
 
 async def test_post_search_and_tag_filter(client: AsyncClient, seeded: None) -> None:
@@ -79,7 +79,7 @@ async def test_project_lifecycle(client: AsyncClient, owner: User, seeded: None)
 
     await invalidate_public_cache()
     assert (await client.get("/api/v1/projects/yangi-loyiha")).status_code == 200
-    assert (await client.get("/api/v1/site")).json()["facts"][0]["n"] == 15  # stats follow projects
+    assert (await client.get("/api/v1/site")).json()["facts"][0]["n"] == 14  # stats follow projects
     assert jobs("rebuild_site")
 
 
