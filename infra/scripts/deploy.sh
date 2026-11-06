@@ -61,7 +61,7 @@ compose "$TAG" up -d postgres redis
 for _ in $(seq 60); do
   [ "$(docker inspect -f '{{.State.Health.Status}}' "$(compose "$TAG" ps -q postgres)")" = healthy ] && break; sleep 2
 done
-if [ -n "$PREV_TAG" ]; then BACKUP_REASON=predeploy "$SRC/infra/scripts/backup.sh" "$ENV_NAME" || { notify "❌ $ENV_NAME: deploydan oldingi backup yiqildi, deploy to'xtatildi"; exit 1; }; fi
+if [ -n "$PREV_TAG" ]; then BACKUP_REASON=predeploy bash "$SRC/infra/scripts/backup.sh" "$ENV_NAME" || { notify "❌ $ENV_NAME: deploydan oldingi backup yiqildi, deploy to'xtatildi"; exit 1; }; fi
 
 # 4. Migrations (expand-only, backwards compatible) with the NEW image
 compose "$TAG" run --rm --no-deps api alembic upgrade head

@@ -23,9 +23,9 @@ install -m 600 /dev/null /root/age-key.txt && nano /root/age-key.txt   # parol m
 ## 3. Tiklash
 Avval joriy holatdan zaxira oling (xato tiklashga qarshi):
 ```bash
-BACKUP_REASON=pre-restore /opt/jamolxon/src/infra/scripts/backup.sh production
+BACKUP_REASON=pre-restore bash /opt/jamolxon/src/infra/scripts/backup.sh production
 docker compose -p jamolxon stop api worker          # yozuvlarni to'xtatish
-AGE_IDENTITY=/root/age-key.txt /opt/jamolxon/src/infra/scripts/restore.sh production /var/backups/jamolxon/production/daily/<fayl>
+AGE_IDENTITY=/root/age-key.txt bash /opt/jamolxon/src/infra/scripts/restore.sh production /var/backups/jamolxon/production/daily/<fayl>
 docker compose -p jamolxon start api worker
 curl -fsS https://jamolxon.uz/api/v1/ready
 ```

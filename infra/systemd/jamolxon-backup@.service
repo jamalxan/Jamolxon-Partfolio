@@ -5,6 +5,6 @@ Requires=docker.service
 
 [Service]
 Type=oneshot
-ExecStart=/opt/jamolxon/src/infra/scripts/backup.sh %i
+ExecStart=/bin/bash /opt/jamolxon/src/infra/scripts/backup.sh %i
 Nice=10
 IOSchedulingClass=idle
