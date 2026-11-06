@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Sayt palitrasi: --maroon #250104, --red #D71A06, --yellow #CDF73D, --cream #FFF1DC */
+@layer base {
+  :root {
+    --background: 37 1 4;
+    --foreground: 255 241 220;
+    --card: 51 4 8;
+    --popover: 45 3 7;
+    --primary: 205 247 61;
+    --primary-foreground: 37 1 4;
+    --secondary: 58 5 9;
+    --muted: 58 5 9;
+    --muted-foreground: 214 196 178;
+    --accent: 74 10 15;
+    --destructive: 215 26 6;
+    --border: 92 40 40;
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tight;
+  }
+
+  ::selection {
+    background: #cdf73d;
+    color: #250104;
+  }
+}
+
+/* Markdown preview (body_md → sanitizatsiyalangan HTML) */
+.prose-jx {
+  line-height: 1.65;
+}
+.prose-jx h1,
+.prose-jx h2,
+.prose-jx h3 {
+  font-weight: 700;
+  margin: 1.2em 0 0.5em;
+  line-height: 1.2;
+}
+.prose-jx h1 {
+  font-size: 1.5rem;
+}
+.prose-jx h2 {
+  font-size: 1.25rem;
+}
+.prose-jx h3 {
+  font-size: 1.1rem;
+}
+.prose-jx p,
+.prose-jx ul,
+.prose-jx ol,
+.prose-jx blockquote,
+.prose-jx pre {
+  margin: 0 0 0.9em;
+}
+.prose-jx ul {
+  list-style: disc;
+  padding-left: 1.4em;
+}
+.prose-jx ol {
+  list-style: decimal;
+  padding-left: 1.4em;
+}
+.prose-jx a {
+  color: #cdf73d;
+  text-decoration: underline;
+}
+.prose-jx blockquote {
+  border-left: 3px solid #cdf73d;
+  padding-left: 0.9em;
+  opacity: 0.9;
+}
+.prose-jx code {
+  background: rgba(255, 241, 220, 0.1);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.prose-jx pre {
+  background: rgba(0, 0, 0, 0.35);
+  padding: 0.8em;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+.prose-jx pre code {
+  background: none;
+  padding: 0;
+}
+.prose-jx img {
+  max-width: 100%;
+  border-radius: 8px;
+}
