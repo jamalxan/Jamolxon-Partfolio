@@ -31,7 +31,7 @@ SIZE="$(stat -c %s "$FILE")"
 # weekly (Monday) and monthly (1st) copies — hard links, no extra space
 [ "$(date -u +%u)" = 1 ] && [ "$REASON" = daily ] && ln -f "$FILE" "$DEST/weekly/" || true
 [ "$(date -u +%d)" = 01 ] && [ "$REASON" = daily ] && ln -f "$FILE" "$DEST/monthly/" || true
-prune() { ls -1t "$1"/*.age 2>/dev/null | tail -n +"$(( $2 + 1 ))" | xargs -r rm -f; }
+prune() { { ls -1t "$1"/*.age 2>/dev/null || true; } | tail -n +"$(( $2 + 1 ))" | xargs -r rm -f; }
 prune "$DEST/daily" 7; prune "$DEST/weekly" 4; prune "$DEST/monthly" 6
 
 if [ -n "${BACKUP_S3_BUCKET:-}" ]; then
