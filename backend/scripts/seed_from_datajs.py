@@ -129,7 +129,7 @@ def load(path: Path, refresh: bool) -> dict[str, Any]:
         node = shutil.which("node")
         if not node:
             raise SystemExit("node topilmadi: --refresh uchun Node.js kerak")
-        subprocess.run([node, str(ROOT / "scripts" / "export_datajs.mjs"), str(path)], check=True)
+        subprocess.run([node, str(ROOT / "scripts" / "export_datajs.mjs"), str(path)], check=True)  # noqa: S603 - fixed argv, no shell
     data: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
     return data
 

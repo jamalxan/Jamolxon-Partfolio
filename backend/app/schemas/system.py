@@ -59,7 +59,7 @@ class MediaOut(Out):
     variants: dict[str, Any]
     alt: str
     blurhash: str | None
-    used_in: list[dict[str, Any]] = []
+    used_in: list[dict[str, Any]] = []  # noqa: RUF012 - pydantic copies defaults
     created_at: datetime
 
 

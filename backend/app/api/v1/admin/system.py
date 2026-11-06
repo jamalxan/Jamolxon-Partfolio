@@ -1,4 +1,5 @@
 import uuid
+from collections.abc import Sequence
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -34,8 +35,10 @@ async def dashboard(session: DB, user: Staff) -> dict[str, Any]:
     new = (await session.scalars(select(Lead).where(Lead.status == "new").order_by(Lead.created_at.desc())
                                  .limit(10))).all()
     pubs: list[dict[str, Any]] = []
-    for entity, model in (("project", Project), ("service", Service), ("post", Post)):
-        rows = (await session.scalars(select(model).where(model.status == "published", model.deleted_at.is_(None))
+    models: tuple[tuple[str, type[Project] | type[Service] | type[Post]], ...] = (
+        ("project", Project), ("service", Service), ("post", Post))
+    for entity, model in models:
+        rows: Sequence[Any] = (await session.scalars(select(model).where(model.status == "published", model.deleted_at.is_(None))
                                       .order_by(model.published_at.desc().nulls_last()).limit(5))).all()
         pubs += [{"entity": entity, "id": str(r.id), "title": r.title, "published_at": r.published_at} for r in rows]
     pubs.sort(key=lambda x: x["published_at"] or datetime.min.replace(tzinfo=UTC), reverse=True)

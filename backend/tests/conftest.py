@@ -11,23 +11,23 @@ os.environ["SITE_URL"] = "https://jamolxon.test"
 os.environ["TURNSTILE_SECRET"] = ""
 os.environ["TELEGRAM_BOT_TOKEN"] = ""
 
-from collections.abc import AsyncIterator  # noqa: E402
-from pathlib import Path  # noqa: E402
-from typing import Any  # noqa: E402
+from collections.abc import AsyncIterator
+from pathlib import Path
+from typing import Any
 
-import pyotp  # noqa: E402
-import pytest  # noqa: E402
-from alembic import command  # noqa: E402
-from alembic.config import Config  # noqa: E402
-from httpx import ASGITransport, AsyncClient  # noqa: E402
-from sqlalchemy import text  # noqa: E402
+import pyotp
+import pytest
+from alembic import command
+from alembic.config import Config
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy import text
 
-from app.core import queue  # noqa: E402
-from app.core.config import get_settings  # noqa: E402
-from app.core.db import dispose_engine, get_sessionmaker  # noqa: E402
-from app.core.redis import close_redis, get_redis  # noqa: E402
-from app.core.security import encrypt, hash_password  # noqa: E402
-from app.models import User  # noqa: E402
+from app.core import queue
+from app.core.config import get_settings
+from app.core.db import dispose_engine, get_sessionmaker
+from app.core.redis import close_redis, get_redis
+from app.core.security import encrypt, hash_password
+from app.models import User
 
 BACKEND = Path(__file__).resolve().parents[1]
 PASSWORD = "to'g'ri-parol-2026!"

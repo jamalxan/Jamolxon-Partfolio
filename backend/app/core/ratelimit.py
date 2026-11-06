@@ -37,4 +37,4 @@ async def enforce(key: str, limit: int, window_seconds: int) -> None:
 
 def client_ip(request: Request) -> str:
     # nginx resolves the real client IP (Cloudflare / Caddy aware) and uvicorn applies X-Forwarded-For.
-    return request.client.host if request.client else "0.0.0.0"
+    return request.client.host if request.client else "0.0.0.0"  # noqa: S104 - placeholder address, not a bind

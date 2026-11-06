@@ -96,6 +96,9 @@ async def test_slug_change_creates_301_redirect(client: AsyncClient, owner: User
     pairs = {(x["from_path"], x["to_path"], x["code"]) for x in redirects}
     assert ("/loyihalar/yangi-loyiha/", "/loyihalar/uchinchi-nom/", 301) in pairs  # chain collapsed
     assert ("/loyihalar/yangi-nom/", "/loyihalar/uchinchi-nom/", 301) in pairs
+    r = await client.get("/api/v1/resolve?path=/loyihalar/yangi-loyiha")
+    assert r.status_code == 301 and r.headers["location"] == "/loyihalar/uchinchi-nom/"
+    assert (await client.get("/api/v1/resolve?path=/yoq/")).status_code == 404
 
 
 async def test_optimistic_lock_conflict(client: AsyncClient, owner: User, seeded: None) -> None:
@@ -203,8 +206,8 @@ async def test_media_upload_rules(client: AsyncClient, owner: User, tmp_path: Pa
     key = m["url"].rsplit("/", 1)[1]
     assert ".." not in key and "passwd" not in key and m["width"] == 1200
     assert set(m["variants"]["webp"]) == {"480", "960"}
-    stored = Image.open(tmp_path / key)
-    assert not stored.getexif().get_ifd(0x8825)  # GPS stripped
+    with Image.open(tmp_path / key) as stored:
+        assert not stored.getexif().get_ifd(0x8825)  # GPS stripped
     p = (await client.post("/api/v1/admin/projects", json={"slug": "rasmli", "title": "R", "cover_id": m["id"]},
                            headers=h)).json()
     assert (await client.delete(f"/api/v1/admin/media/{m['id']}", headers=h)).status_code == 409  # in use

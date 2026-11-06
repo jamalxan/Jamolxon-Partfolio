@@ -1,4 +1,4 @@
-# ruff: noqa: E501  (SVG markup lines mirror illustrations.js)
+
 """Port of frontend/assets/js/illustrations.js (IL.draw) — SVG "product shots".
 
 Output is byte-for-byte what the JS produced (numbers are formatted the way JS

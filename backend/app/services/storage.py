@@ -66,16 +66,16 @@ def _encode(img: Image.Image, fmt: str) -> bytes:
 def process_image(data: bytes) -> tuple[str, bytes, int, int, dict[str, bytes]]:
     """Re-encodes the image (drops EXIF/metadata) and builds variants. Returns (fmt, main, w, h, variants)."""
     try:
-        img = Image.open(io.BytesIO(data))
-        img.verify()
-        img = Image.open(io.BytesIO(data))
-        fmt = img.format or ""
-        img.load()
+        probe = Image.open(io.BytesIO(data))
+        probe.verify()
+        src = Image.open(io.BytesIO(data))
+        fmt = src.format or ""
+        src.load()
     except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as e:
         raise Problem(415, "unsupported_media") from e
     if fmt not in IMAGE_FORMATS:
         raise Problem(415, "unsupported_media")
-    img = ImageOps.exif_transpose(img)  # apply orientation, then metadata is not copied on save
+    img: Image.Image = ImageOps.exif_transpose(src)  # apply orientation, then metadata is not copied on save
     if img.mode not in ("RGB", "RGBA"):
         img = img.convert("RGBA" if "A" in img.getbands() else "RGB")
     clean = Image.new(img.mode, img.size)

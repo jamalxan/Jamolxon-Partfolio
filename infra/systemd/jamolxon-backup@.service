@@ -1,0 +1,10 @@
+[Unit]
+Description=jamolxon PostgreSQL backup (%i)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/jamolxon/src/infra/scripts/backup.sh %i
+Nice=10
+IOSchedulingClass=idle

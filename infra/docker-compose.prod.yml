@@ -1,0 +1,102 @@
+# Production and staging (same file, separate compose projects, DBs and volumes):
+#   docker compose -p jamolxon         --env-file /opt/jamolxon/prod/.env    -f infra/docker-compose.prod.yml up -d
+#   docker compose -p jamolxon-staging --env-file /opt/jamolxon/staging/.env -f infra/docker-compose.prod.yml up -d
+# The shared Caddy (socialauto) terminates TLS and proxies to "<project>-nginx" on the socialauto_default network.
+# Nothing here publishes a host port.
+
+x-app: &app
+  image: jamolxon-app:${APP_TAG:?set APP_TAG}
+  env_file: ${ENV_FILE:?set ENV_FILE}
+  environment:
+    DATABASE_URL: postgresql+asyncpg://jamolxon:${POSTGRES_PASSWORD}@postgres:5432/jamolxon
+    REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+  read_only: true
+  tmpfs: ["/tmp"]
+  security_opt: ["no-new-privileges:true"]
+  cap_drop: ["ALL"]
+  restart: always
+  networks: [internal]
+  depends_on:
+    postgres: { condition: service_healthy }
+    redis: { condition: service_healthy }
+  logging: { driver: json-file, options: { max-size: "10m", max-file: "5" } }
+
+services:
+  api:
+    <<: *app
+    volumes: [media:/srv/media]
+    mem_limit: ${API_MEM:-512m}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys;sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/v1/ready',timeout=4).status==200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  worker:
+    <<: *app
+    command: ["arq", "app.workers.main.WorkerSettings"]
+    volumes: [site:/srv/site, media:/srv/media]
+    mem_limit: ${WORKER_MEM:-384m}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys,redis,os;r=redis.Redis.from_url(os.environ['REDIS_URL']);sys.exit(0 if r.ping() else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  nginx:
+    image: jamolxon-web:${APP_TAG:?set APP_TAG}
+    container_name: ${COMPOSE_PROJECT_NAME:?set COMPOSE_PROJECT_NAME}-nginx
+    restart: always
+    read_only: true
+    tmpfs: ["/tmp", "/var/cache/nginx"]
+    security_opt: ["no-new-privileges:true"]
+    volumes: [site:/srv/site:ro, media:/srv/media:ro]
+    networks: [internal, edge]
+    mem_limit: 64m
+    depends_on: [api]
+    logging: { driver: json-file, options: { max-size: "10m", max-file: "5" } }
+
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: jamolxon
+      POSTGRES_USER: jamolxon
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    volumes: [pg_data:/var/lib/postgresql/data]
+    networks: [internal]
+    mem_limit: ${PG_MEM:-512m}
+    shm_size: 128m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jamolxon"]
+      interval: 5s
+      retries: 20
+    logging: { driver: json-file, options: { max-size: "10m", max-file: "5" } }
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:?set REDIS_PASSWORD}",
+              "--maxmemory", "96mb", "--maxmemory-policy", "volatile-lru"]
+    volumes: [redis_data:/data]
+    networks: [internal]
+    mem_limit: 128m
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" --no-auth-warning ping | grep -q PONG"]
+      interval: 5s
+      retries: 20
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    logging: { driver: json-file, options: { max-size: "10m", max-file: "5" } }
+
+volumes:
+  pg_data:
+  redis_data:
+  site:
+  media:
+
+networks:
+  internal: {}
+  edge:
+    external: true
+    name: socialauto_default

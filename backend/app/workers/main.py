@@ -7,7 +7,7 @@ Run: arq app.workers.main.WorkerSettings
 import logging
 import uuid
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import Any, ClassVar
 
 import httpx
 from arq import Retry, cron, func
@@ -29,7 +29,7 @@ REBUILD_LOCK = "lock:rebuild"
 
 
 def backoff(attempt: int) -> int:
-    return min(2 ** attempt * 5, 300)  # 10s, 20s, 40s, 80s, 160s
+    return int(min(2 ** attempt * 5, 300))  # 10s, 20s, 40s, 80s, 160s
 
 
 async def notify_lead(ctx: dict[str, Any], lead_id: str) -> str:
@@ -185,8 +185,8 @@ async def shutdown(ctx: dict[str, Any]) -> None:
 
 
 class WorkerSettings:
-    functions = [notify_lead, send_alert, func(rebuild_site_job, name="rebuild_site")]
-    cron_jobs = [
+    functions: ClassVar[list[Any]] = [notify_lead, send_alert, func(rebuild_site_job, name="rebuild_site")]
+    cron_jobs: ClassVar[list[Any]] = [
         cron(publish_scheduled, second={0}),
         cron(heartbeat, second={30}),
         cron(remind_stale_leads, minute={5, 35}),

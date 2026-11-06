@@ -40,6 +40,10 @@ def normalize_contact(contact_type: str, value: str) -> str:
     return phonenumbers.format_number(num, phonenumbers.PhoneNumberFormat.E164)
 
 
+UtmKey = Annotated[str, StringConstraints(pattern=r"^utm_[a-z]+$")]
+UtmValue = Annotated[str, StringConstraints(max_length=100)]
+
+
 class LeadCreate(In):
     name: Annotated[str, StringConstraints(min_length=2, max_length=80)]
     contact_type: ContactType
@@ -50,9 +54,7 @@ class LeadCreate(In):
     message: Annotated[str, StringConstraints(min_length=10, max_length=4000)]
     consent: bool
     source_page: Annotated[str, StringConstraints(max_length=300)] = ""
-    utm: dict[Annotated[str, StringConstraints(pattern=r"^utm_[a-z]+$")], Annotated[str, StringConstraints(max_length=100)]] = Field(
-        default_factory=dict, max_length=6
-    )
+    utm: dict[UtmKey, UtmValue] = Field(default_factory=dict, max_length=6)
     website: Annotated[str, StringConstraints(max_length=200)] = ""  # honeypot
     elapsed_ms: int | None = Field(None, ge=0)
     turnstile_token: Annotated[str, StringConstraints(max_length=4096)] = ""
@@ -103,7 +105,7 @@ class LeadOut(Out):
     assigned_to: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    events: list[LeadEventOut] = []
+    events: list[LeadEventOut] = []  # noqa: RUF012 - pydantic copies defaults
 
 
 class LeadPatch(In):

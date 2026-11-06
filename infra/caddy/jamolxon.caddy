@@ -1,0 +1,23 @@
+# Blocks for the shared Caddyfile (/home/socialauto/Caddyfile). Replace the existing jamolxon.uz blocks with these.
+# Apply WITHOUT restarting Caddy (other sites stay up):
+#   docker exec socialauto-caddy-1 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+#   docker exec socialauto-caddy-1 caddy reload   --config /etc/caddy/Caddyfile --adapter caddyfile
+
+jamolxon.uz, admin.jamolxon.uz {
+	encode zstd gzip
+	reverse_proxy jamolxon-nginx:80 {
+		header_up X-Forwarded-For {client_ip}
+	}
+}
+
+www.jamolxon.uz {
+	redir https://jamolxon.uz{uri} 301
+}
+
+staging.jamolxon.uz, admin.staging.jamolxon.uz {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	reverse_proxy jamolxon-staging-nginx:80 {
+		header_up X-Forwarded-For {client_ip}
+	}
+}

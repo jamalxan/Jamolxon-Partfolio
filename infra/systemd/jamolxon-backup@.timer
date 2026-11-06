@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily jamolxon backup at 03:00 Tashkent (%i)
+
+[Timer]
+OnCalendar=*-*-* 03:00:00 Asia/Tashkent
+Persistent=true
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target

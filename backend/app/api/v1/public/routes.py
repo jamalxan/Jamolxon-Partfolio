@@ -212,6 +212,18 @@ async def submit_lead(request: Request, session: DB) -> Response:
     return JSONResponse({"id": str(lead.id), "message": "Rahmat, 2 soat ichida bog'lanaman"}, status_code=201)
 
 
+@router.get("/resolve", include_in_schema=False)
+async def resolve(session: DB, path: str = Query(..., max_length=300)) -> Response:
+    """nginx asks here for paths with no static file: admin/slug redirects (301/302), else 404."""
+    from app.models import Redirect
+
+    candidates = {path, path if path.endswith("/") else path + "/"}
+    r = await session.scalar(select(Redirect).where(Redirect.from_path.in_(candidates)))
+    if r is None:
+        raise not_found()
+    return RedirectResponse(r.to_path, status_code=r.code, headers={"Cache-Control": "public, max-age=3600"})
+
+
 @router.get("/preview/{token}", response_class=HTMLResponse, include_in_schema=False)
 async def preview(token: str, session: DB) -> HTMLResponse:
     if len(token) > 100:

@@ -99,7 +99,11 @@ async def login(body: LoginIn, request: Request, response: Response, session: DB
         raise Problem(423, "locked", headers={"Retry-After": str(s.login_window_minutes * 60)})
 
     user = await session.scalar(select(User).where(User.email == body.email.lower()))
-    ok = verify_password(user.password_hash, body.password) if user else (dummy_verify() or False)
+    if user:
+        ok = verify_password(user.password_hash, body.password)
+    else:
+        dummy_verify()  # equal timing for unknown emails
+        ok = False
     if not ok or user is None or not user.is_active:
         allowed, _ = await hit(key, s.login_max_attempts, s.login_window_minutes * 60)
         if user is not None:

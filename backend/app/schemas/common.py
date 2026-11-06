@@ -1,9 +1,7 @@
 from datetime import datetime
-from typing import Annotated, Generic, Literal, TypeVar
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
-
-T = TypeVar("T")
 
 SLUG_RE = r"^[a-z0-9]+(?:-[a-z0-9]+)*$"
 Slug = Annotated[str, StringConstraints(pattern=SLUG_RE, min_length=1, max_length=80)]
@@ -20,7 +18,7 @@ class Out(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class Page(BaseModel, Generic[T]):
+class Page[T](BaseModel):
     items: list[T]
     total: int
     page: int

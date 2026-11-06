@@ -1,4 +1,4 @@
-# ruff: noqa: E501  (SVG markup is kept on one line, verbatim from templates.js)
+
 """SVG icons — copied verbatim from templates.js (ICON)."""
 
 ICON: dict[str, str] = {
