@@ -10,8 +10,8 @@
       <div class="pd__fig rv">{{ figure(p, index) }}</div>
     </div>
     <div class="pd__body">
-      <div>{% for s in p.sections %}<div class="pd__sec rv"><h3>{{ s.h }}</h3>{% for t in s.p %}<p>{{ t }}</p>{% endfor %}</div>{% endfor %}
-        <div class="pd__sec rv"><h3>Shunga o'xshash tizim kerakmi?</h3><p>Shu loyihadagi yadro — {{ p.stack[:3]|join(', ') }} — sizning sohangizga ham moslashadi. Muammoni yozing, 24 soat ichida yechim taklifini qaytaraman.</p><a class="btn btn-y" href="/taklif/">{{ ICON.send }} Taklif yozish</a></div>
+      <div>{% for s in p.sections %}<div class="pd__sec rv"><h2>{{ s.h }}</h2>{% for t in s.p %}<p>{{ t }}</p>{% endfor %}</div>{% endfor %}
+        <div class="pd__sec rv"><h2>Shunga o'xshash tizim kerakmi?</h2><p>Shu loyihadagi yadro — {{ p.stack[:3]|join(', ') }} — sizning sohangizga ham moslashadi. Muammoni yozing, 24 soat ichida yechim taklifini qaytaraman.</p><a class="btn btn-y" href="/taklif/">{{ ICON.send }} Taklif yozish</a></div>
       </div>
       <aside class="pd__side">
         <div class="pd__box"><b>Texnologiyalar</b><div class="stack">{% for s in p.stack %}<span>{{ s }}</span>{% endfor %}</div></div>

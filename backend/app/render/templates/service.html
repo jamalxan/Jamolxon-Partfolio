@@ -9,11 +9,11 @@
     </div>
     <div class="pd__body">
       <div>
-        <div class="pd__sec rv"><h3>Nima kiradi</h3><ul>{% for x in sv.includes %}<li>{{ x }}</li>{% endfor %}</ul></div>
-        <div class="pd__sec rv"><h3>Kimga kerak</h3><ul>{% for x in sv.who %}<li>{{ x }}</li>{% endfor %}</ul></div>
-        <div class="pd__sec rv"><h3>Qanday ishlaymiz</h3><ol class="svc__steps">{% for x in sv.process %}<li><span>{{ loop.index }}</span>{{ x }}</li>{% endfor %}</ol></div>
-        {% if sv.faq %}<div class="pd__sec rv"><h3>Tez-tez so'raladi</h3>{% for q, a in sv.faq %}<details class="faq"><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}</div>{% endif %}
-        <div class="pd__sec rv"><h3>Shu xizmat kerakmi?</h3><p>Qisqacha yozing: nima bor, nima kerak, qachon. 24 soat ichida yechim varianti, bosqichlar va narx oralig'ini qaytaraman.</p><a class="btn btn-y" href="{{ url.taklif_offer('svc:' ~ sv.slug) }}" data-offer="svc:{{ sv.slug }}">{{ ICON.send }} Taklif yozish</a></div>
+        <div class="pd__sec rv"><h2>Nima kiradi</h2><ul>{% for x in sv.includes %}<li>{{ x }}</li>{% endfor %}</ul></div>
+        <div class="pd__sec rv"><h2>Kimga kerak</h2><ul>{% for x in sv.who %}<li>{{ x }}</li>{% endfor %}</ul></div>
+        <div class="pd__sec rv"><h2>Qanday ishlaymiz</h2><ol class="svc__steps">{% for x in sv.process %}<li><span>{{ loop.index }}</span>{{ x }}</li>{% endfor %}</ol></div>
+        {% if sv.faq %}<div class="pd__sec rv"><h2>Tez-tez so'raladi</h2>{% for q, a in sv.faq %}<details class="faq"><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}</div>{% endif %}
+        <div class="pd__sec rv"><h2>Shu xizmat kerakmi?</h2><p>Qisqacha yozing: nima bor, nima kerak, qachon. 24 soat ichida yechim varianti, bosqichlar va narx oralig'ini qaytaraman.</p><a class="btn btn-y" href="{{ url.taklif_offer('svc:' ~ sv.slug) }}" data-offer="svc:{{ sv.slug }}">{{ ICON.send }} Taklif yozish</a></div>
       </div>
       <aside class="pd__side">
         <div class="pd__box res"><b>Muddat</b><p style="font-weight:600">{{ sv.timeline }}</p><p style="margin-top:8px;opacity:.75;font-size:13.5px">Aniq narx va muddat — texnik topshiriqdan keyin, yozma.</p></div>

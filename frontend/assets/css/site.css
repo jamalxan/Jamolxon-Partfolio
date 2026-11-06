@@ -32,3 +32,6 @@
 /* blog sahifalash */
 .blog__pages{gap:14px;align-items:center;flex-wrap:wrap}
 .blog__pageno{font-family:var(--fd);font-weight:700;font-size:14px;opacity:.7}
+
+/* loyiha/xizmat bo'limlari: h1 -> h2 tartibi (a11y), ko'rinishi avvalgi h3 bilan bir xil */
+.pd__sec h2{font-size:clamp(22px,2.2vw,34px);line-height:1.08;margin-bottom:14px}
