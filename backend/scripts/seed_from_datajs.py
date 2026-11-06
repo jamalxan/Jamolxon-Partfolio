@@ -23,7 +23,7 @@ from app.models import Category, Offer, Post, ProcessStep, Project, Service, Set
 from app.services.markdown import plain_text, sanitize_html, sections_to_html
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_FILE = ROOT / "backend" / "seed" / "content.json"
+DEFAULT_FILE = Path(__file__).resolve().parents[1] / "seed" / "content.json"  # backend/seed (or /app/seed in the image)
 
 
 def slugify_tag(title: str) -> str:

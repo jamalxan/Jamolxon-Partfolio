@@ -1,0 +1,3 @@
+# Test fixtures / pwned-password list, not secrets
+c2e59f9c35a22d765d2b7a9fa97177acdf4f18de:backend/app/core/security.py:generic-api-key:51
+c2e59f9c35a22d765d2b7a9fa97177acdf4f18de:backend/tests/test_content.py:generic-api-key:223

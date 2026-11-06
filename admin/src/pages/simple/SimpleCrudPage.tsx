@@ -31,7 +31,7 @@ export interface SimpleCrudConfig {
   description: string
   singular: string
   fields: FieldDef[]
-  schema: ZodType
+  schema: ZodType<Values, Values>
   empty: Values
   toForm?: (r: Values) => Values
   fromForm?: (f: Values) => Values

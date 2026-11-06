@@ -7,3 +7,4 @@ add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
 add_header Cross-Origin-Opener-Policy "same-origin" always;
 add_header X-Frame-Options "DENY" always;
 add_header X-Request-ID $request_id always;
+add_header X-Robots-Tag $robots_tag always;

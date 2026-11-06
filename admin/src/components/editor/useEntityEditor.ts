@@ -18,7 +18,7 @@ interface Options<R, F extends FieldValues> {
   res: Res
   id: string | undefined
   basePath: string
-  schema: ZodType<F>
+  schema: ZodType<F, F>
   empty: F
   toForm: (r: R) => F
   fromForm: (f: F) => Record<string, unknown>

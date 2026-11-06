@@ -41,7 +41,7 @@ export const projectSchema = z.object({
   slug,
   title,
   subtitle: z.string().trim().max(200, 'Qisqa tavsif 200 belgidan oshmasin'),
-  category: z.enum(PROJECT_CATEGORIES, { errorMap: () => ({ message: 'Kategoriyani tanlang' }) }),
+  category: z.enum(PROJECT_CATEGORIES, { error: 'Kategoriyani tanlang' }),
   url: optionalUrl,
   year: z.string().trim().refine((v) => v === '' || /^(19|20)\d{2}$/.test(v), "Yil 4 xonali bo'lsin (masalan: 2025)"),
   role: z.string().trim().max(200),
