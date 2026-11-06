@@ -69,3 +69,8 @@ h1,h2,h3,.pd__nav b{overflow-wrap:break-word}
   .foot a,.crumbs a,.pd__body .pd__box a,.ex a{display:inline-block;padding-block:10px;margin-block:-10px}
   .faq summary{min-height:44px;display:flex;align-items:center}
 }
+
+/* sariq "Natija" qutisidagi qizil yorliq: 4.2:1 -> 5.4:1 (WCAG AA), rang oilasi o'sha */
+.pd__box.res b{color:#B81404}
+/* CTA qatori sig'masa (har qanday kenglikda) keyingi qatorga o'tadi; sig'sa ko'rinish o'zgarmaydi */
+.hero__cta{flex-wrap:wrap}

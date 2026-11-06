@@ -45,7 +45,7 @@ for (const [name, w, h, touch] of DEVICES) {
   const page = await ctx.newPage();
   for (const url of PAGES) {
     await page.goto(BASE + url, { waitUntil: 'networkidle' });
-    await page.evaluate(() => document.fonts.ready);
+    await page.evaluate(async () => { await Promise.all([...document.fonts].map(f => f.load().catch(() => {}))); await document.fonts.ready; });
     await page.waitForTimeout(2000);
     const r = await page.evaluate(() => {
       const vw = document.documentElement.clientWidth;
