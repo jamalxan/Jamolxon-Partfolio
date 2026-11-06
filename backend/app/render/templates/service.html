@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_macros.html" import crumbs, pcard with context %}
+{% block main %}<section class="sec" data-theme="red"><div class="wrap">
+    {{ crumbs([('Bosh sahifa', '/'), ('Xizmatlar', '/#xizmatlar'), (sv.title, None)]) }}
+    <div class="pd__hero" style="padding-top:0">
+      <div><span class="badge b-live"><i></i>Xizmat {{ '%02d' % (index + 1) }}</span><h1>{{ sv.title }}</h1><div class="tl">{{ sv.short }}</div>
+        <div class="pd__links"><a class="btn btn-y" href="{{ url.taklif_offer('svc:' ~ sv.slug) }}" data-offer="svc:{{ sv.slug }}">{{ ICON.send }} Shu xizmatni so'rash</a><a class="btn btn-o" href="{{ CONTACT.tgUrl }}" target="_blank" rel="noopener">Telegram'da yozish</a></div></div>
+      <div class="pd__fig rv">{{ illo(sv.illo, 'maroon') }}</div>
+    </div>
+    <div class="pd__body">
+      <div>
+        <div class="pd__sec rv"><h3>Nima kiradi</h3><ul>{% for x in sv.includes %}<li>{{ x }}</li>{% endfor %}</ul></div>
+        <div class="pd__sec rv"><h3>Kimga kerak</h3><ul>{% for x in sv.who %}<li>{{ x }}</li>{% endfor %}</ul></div>
+        <div class="pd__sec rv"><h3>Qanday ishlaymiz</h3><ol class="svc__steps">{% for x in sv.process %}<li><span>{{ loop.index }}</span>{{ x }}</li>{% endfor %}</ol></div>
+        {% if sv.faq %}<div class="pd__sec rv"><h3>Tez-tez so'raladi</h3>{% for q, a in sv.faq %}<details class="faq"><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}</div>{% endif %}
+        <div class="pd__sec rv"><h3>Shu xizmat kerakmi?</h3><p>Qisqacha yozing: nima bor, nima kerak, qachon. 24 soat ichida yechim varianti, bosqichlar va narx oralig'ini qaytaraman.</p><a class="btn btn-y" href="{{ url.taklif_offer('svc:' ~ sv.slug) }}" data-offer="svc:{{ sv.slug }}">{{ ICON.send }} Taklif yozish</a></div>
+      </div>
+      <aside class="pd__side">
+        <div class="pd__box res"><b>Muddat</b><p style="font-weight:600">{{ sv.timeline }}</p><p style="margin-top:8px;opacity:.75;font-size:13.5px">Aniq narx va muddat — texnik topshiriqdan keyin, yozma.</p></div>
+        <div class="pd__box"><b>Texnologiyalar</b><div class="stack">{% for x in sv.stack %}<span>{{ x }}</span>{% endfor %}</div></div>
+      </aside>
+    </div>
+    {% if examples %}<div class="pgroup" style="margin-top:clamp(48px,6vw,96px)"><div class="pgroup__h"><h3>Misollar — {{ sv.title }}</h3><p>Shu xizmat doirasida qilingan real ishlar</p></div><div class="pgrid">{% for p in examples %}{{ pcard(p, loop.index0) }}{% endfor %}</div></div>{% endif %}
+    <div class="pd__nav"><a href="{{ url.service(prev.slug) }}"><small>← Oldingi xizmat</small><b>{{ prev.title }}</b></a><a class="next" href="{{ url.service(next.slug) }}"><small>Keyingi xizmat →</small><b>{{ next.title }}</b></a></div>
+  </div></section>{% endblock %}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ seo.title }}</title>
+<meta name="description" content="{{ seo.description }}">
+{% if seo.noindex %}<meta name="robots" content="noindex">
+{% endif %}
+<link rel="canonical" href="{{ seo.canonical }}">
+<meta property="og:type" content="{{ seo.og_type }}">
+<meta property="og:site_name" content="Jamolxon">
+<meta property="og:locale" content="uz_UZ">
+<meta property="og:title" content="{{ seo.og_title }}">
+<meta property="og:description" content="{{ seo.description }}">
+<meta property="og:url" content="{{ seo.canonical }}">
+<meta property="og:image" content="{{ seo.og_image }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo.og_title }}">
+<meta name="twitter:description" content="{{ seo.description }}">
+<meta name="twitter:image" content="{{ seo.og_image }}">
+{% for f in assets.preload_fonts %}<link rel="preload" href="{{ f }}" as="font" type="font/woff2" crossorigin>
+{% endfor %}
+{% for c in assets.css %}<link rel="stylesheet" href="{{ c }}">
+{% endfor %}
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="Jamolxon — Blog" href="/rss.xml">
+<meta name="theme-color" content="#250104">
+{% if ym_id %}<meta name="ym-id" content="{{ ym_id }}">
+{% endif %}
+{% for m in assets.modulepreload %}<link rel="modulepreload" href="{{ m }}">
+{% endfor %}
+<script type="module" src="{{ assets.js }}"></script>
+{% for block in seo.jsonld %}<script type="application/ld+json">{{ block }}</script>
+{% endfor %}
+{% block head_extra %}{% endblock %}
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><i id="progress"></i></div>
+
+<header class="nav" id="nav">
+  <a class="mark" href="/"><i></i>Jamolxon</a>
+  <ul>
+    <li><a href="/"{% if nav_active == 'home' %} class="active"{% endif %}>Bosh sahifa</a></li>
+    <li><a href="/#xizmatlar"{% if nav_active == 'xizmatlar' %} class="active"{% endif %}>Xizmatlar</a></li>
+    <li><a href="/#yechimlar"{% if nav_active == 'yechimlar' %} class="active"{% endif %}>AI yechimlar</a></li>
+    <li><a href="/loyihalar/"{% if nav_active == 'loyihalar' %} class="active"{% endif %}>Loyihalar</a></li>
+    <li><a href="/blog/"{% if nav_active == 'blog' %} class="active"{% endif %}>Blog</a></li>
+  </ul>
+  <a class="cta" href="/taklif/">Taklif yozish</a>
+  <button class="burger" id="burger" aria-label="Menyu" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</header>
+<nav class="menu" id="menu" aria-label="Mobil menyu">
+  <a href="/"><span>01</span>Bosh sahifa</a>
+  <a href="/#xizmatlar"><span>02</span>Xizmatlar</a>
+  <a href="/#yechimlar"><span>03</span>AI yechimlar</a>
+  <a href="/loyihalar/"><span>04</span>Loyihalar</a>
+  <a href="/blog/"><span>05</span>Blog</a>
+  <a href="/taklif/"><span>06</span>Taklif yozish</a>
+  <a class="btn btn-y menu-cta" href="{{ CONTACT.tgUrl }}" target="_blank" rel="noopener">Telegram @{{ CONTACT.tg }}</a>
+</nav>
+
+<main id="app" data-view="{{ view }}">{% block main %}{% endblock %}</main>
+
+<footer class="foot">
+  <div class="giant" id="giant" aria-hidden="true">JAMOLXON</div>
+  <div class="foot__sub" aria-hidden="true"><i></i><span>Hozir quryapman:</span><span class="typed" id="typed"></span><span class="caret"></span></div>
+  <div class="foot__grid">
+    <div><b>Jamolxon</b><ul><li>Python backend dasturchi · AI yechimlar</li><li>Promtchi IT studiyasi asoschisi</li><li>Toshkent, O'zbekiston</li></ul></div>
+    <div><b>Sayt</b><ul><li><a href="/#xizmatlar">Xizmatlar</a></li><li><a href="/#yechimlar">AI yechimlar</a></li><li><a href="/loyihalar/">Loyihalar</a></li><li><a href="/blog/">Blog</a></li><li><a href="/taklif/">Taklif yozish</a></li></ul></div>
+    <div><b>Aloqa</b><ul><li><a href="{{ CONTACT.tgUrl }}" target="_blank" rel="noopener">Telegram @{{ CONTACT.tg }}</a></li><li><a href="#" data-mail><span>email</span></a></li><li><a href="#" data-tel><span>telefon</span></a></li><li><a href="{{ CONTACT.ghUrl }}" target="_blank" rel="noopener">{{ CONTACT.gh }}</a></li><li><a href="{{ CONTACT.igUrl }}" target="_blank" rel="noopener">Instagram {{ CONTACT.ig }}</a></li><li><a href="{{ CONTACT.studioUrl }}" target="_blank" rel="noopener">{{ CONTACT.studio }}</a></li></ul></div>
+  </div>
+  <div class="foot__bot"><span>© <span id="year">{{ year }}</span> Jamolxon. Ishda halollik tamoyili: harom yo'nalishdagi loyihalarni olmayman.</span><span>Freymvorksiz, bitta fayl. Three.js · GSAP</span></div>
+</footer>
+<script type="application/json" id="site-data">{{ site_data }}</script>
+</body>
+</html>
