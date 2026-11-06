@@ -1,7 +1,6 @@
-# Blocks for the shared Caddyfile (/home/socialauto/Caddyfile). Replace the existing jamolxon.uz blocks with these.
-# Apply WITHOUT restarting Caddy (other sites stay up):
-#   docker exec socialauto-caddy-1 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
-#   docker exec socialauto-caddy-1 caddy reload   --config /etc/caddy/Caddyfile --adapter caddyfile
+# jamolxon.uz site blocks. Imported by infra/caddy/Caddyfile on the dedicated server (jamolxon-caddy);
+# on the old shared server they were pasted into /home/socialauto/Caddyfile.
+# Reload: docker exec jamolxon-caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
 
 jamolxon.uz, admin.jamolxon.uz {
 	encode zstd gzip

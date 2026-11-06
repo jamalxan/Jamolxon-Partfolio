@@ -114,12 +114,13 @@ frontend/responsive-shots", retention-days: 7 }
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_JX_KEY }}
           KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST || '20.219.147.37' }}
         run: |
           if [ -z "$DEPLOY_KEY" ]; then echo "::warning::DEPLOY_JX_KEY is not set (run infra/scripts/server-setup.sh first): deploy skipped"; exit 0; fi
           install -d -m 700 ~/.ssh
           printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/key && chmod 600 ~/.ssh/key
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
-          ssh -i ~/.ssh/key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes jxdeploy@185.237.97.126 "staging ${GITHUB_SHA}"
+          ssh -i ~/.ssh/key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes "jxdeploy@${DEPLOY_HOST}" "staging ${GITHUB_SHA}"
       - name: E2E on staging
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_JX_KEY }}
@@ -143,12 +144,13 @@ frontend/responsive-shots", retention-days: 7 }
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_JX_KEY }}
           KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST || '20.219.147.37' }}
         run: |
           if [ -z "$DEPLOY_KEY" ]; then echo "::warning::DEPLOY_JX_KEY is not set (run infra/scripts/server-setup.sh first): deploy skipped"; exit 0; fi
           install -d -m 700 ~/.ssh
           printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/key && chmod 600 ~/.ssh/key
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
-          ssh -i ~/.ssh/key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes jxdeploy@185.237.97.126 "production ${GITHUB_SHA}"
+          ssh -i ~/.ssh/key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes "jxdeploy@${DEPLOY_HOST}" "production ${GITHUB_SHA}"
       - name: Smoke
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_JX_KEY }}

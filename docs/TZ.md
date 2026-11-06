@@ -6,6 +6,8 @@
 >
 > Bu bo'lim TZ'ning qolgan qismidan ustun turadi.
 >
+> 0. **Yangilanish (2026-11-06 kech): loyiha alohida serverga ko'chirildi — 20.219.147.37 (Azure, Ubuntu 24.04).** TLS: o'z Caddy'si (`infra/docker-compose.edge.yml`, tarmoq `jamolxon_edge`). CI `jxdeploy@20.219.147.37` ga deploy qiladi. Quyidagi 1- va 3-bandlar eski umumiy server haqida (tarixiy).
+>
 > 1. **Server: hozirgi umumiy server (185.237.97.126), alohida VPS emas.** Unda socialauto, vocably va ainews ham ishlaydi.
 >    - Tashqi TLS va proksi: `socialauto-caddy-1` (Caddy). TZ'dagi nginx konteyneri Caddy ortida turadi va TLS qilmaydi.
 >    - Loyihaning hamma konteynerlari alohida compose loyihasida (`jamolxon`), Postgres va Redis o'ziniki. Caddy bilan faqat `socialauto_default` tarmog'i orqali bog'lanadi.

@@ -1,0 +1,28 @@
+# Edge proxy for the dedicated jamolxon server (20.219.147.37): Caddy terminates TLS (Let's Encrypt)
+# and proxies to jamolxon-nginx / jamolxon-staging-nginx on the jamolxon_edge network.
+# Installed by infra/scripts/server-setup.sh --edge; the Caddyfile is copied to /opt/jamolxon/edge/.
+# Reload after editing (no downtime):
+#   docker exec jamolxon-caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: jamolxon-caddy
+    restart: always
+    ports: ["80:80", "443:443", "443:443/udp"]
+    volumes:
+      - /opt/jamolxon/edge:/etc/caddy:ro   # directory mount: edits stay visible (no stale inode)
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [edge]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 256m
+    logging: { driver: json-file, options: { max-size: "10m", max-file: "5" } }
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  edge:
+    external: true
+    name: jamolxon_edge

@@ -1,7 +1,9 @@
 # Production and staging (same file, separate compose projects, DBs and volumes):
 #   docker compose -p jamolxon         --env-file /opt/jamolxon/prod/.env    -f infra/docker-compose.prod.yml up -d
 #   docker compose -p jamolxon-staging --env-file /opt/jamolxon/staging/.env -f infra/docker-compose.prod.yml up -d
-# The shared Caddy (socialauto) terminates TLS and proxies to "<project>-nginx" on the socialauto_default network.
+# Caddy terminates TLS and proxies to "<project>-nginx" on the edge network (EDGE_NETWORK in .env):
+#   dedicated server (20.219.147.37): jamolxon_edge, Caddy from infra/docker-compose.edge.yml
+#   old shared server: socialauto_default (default, kept for backwards compatibility)
 # Nothing here publishes a host port.
 
 x-app: &app
@@ -99,4 +101,4 @@ networks:
   internal: {}
   edge:
     external: true
-    name: socialauto_default
+    name: ${EDGE_NETWORK:-socialauto_default}

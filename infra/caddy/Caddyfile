@@ -1,0 +1,6 @@
+# Dedicated server Caddyfile (copied to /opt/jamolxon/edge/Caddyfile by server-setup.sh --edge).
+{
+	email jamolxonyoldashaliyev3@gmail.com
+}
+
+import /etc/caddy/jamolxon.caddy
