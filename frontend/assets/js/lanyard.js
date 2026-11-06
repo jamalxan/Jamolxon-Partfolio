@@ -6,6 +6,8 @@
    - sudrashda rezina chegara: pastga/chetga tortish mumkin, qarshilik oshib boradi
    Palitra: krem karta, maroon tasma, sariq/qizil belgilar. Rasm: AVATAR_PHOTO.
    ============================================================ */
+import * as THREE from './three-lite.js';
+
 const Lanyard = (()=>{
   const CONFIG = {
     name:'JAMOLXON', initials:'JX', handle:'@jamalxon',
@@ -167,7 +169,6 @@ const Lanyard = (()=>{
   function observe(stage){if(io)io.disconnect();io=new IntersectionObserver(en=>{visible=en[0].isIntersecting},{threshold:0});io.observe(stage)}
 
   function init(canvas,photo,email){
-    if(!window.THREE)return;
     if(started){if(canvasEl&&canvas!==canvasEl)canvas.replaceWith(canvasEl);stageEl=canvasEl.parentElement;resize();observe(stageEl);const cta=stageEl.querySelector(ctaSel);if(cta)requestAnimationFrame(()=>cta.classList.add('show'));return}
     started=true;canvasEl=canvas;stageEl=canvas.parentElement;CONFIG.email=email||'';
     renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,3));renderer.outputEncoding=THREE.sRGBEncoding;renderer.setClearColor(0x000000,0);
@@ -188,10 +189,11 @@ const Lanyard = (()=>{
     const swivel=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.09,16),metal);swivel.position.y=-.225;const knob=new THREE.Mesh(new THREE.SphereGeometry(.045,16,12),metal);knob.position.y=-.3;clipB.add(swivel,knob);
     strapPts=[];for(let i=0;i<=NU;i++)strapPts.push(P[i]);cordPts=[P[NU+1],P[NU+2],P[NU+3],P[NP-1]];
     bind(canvas);addEventListener('resize',resize);if(window.ResizeObserver)new ResizeObserver(()=>resize()).observe(stageEl);observe(stageEl);
-    const go=()=>{drawFront();drawBack();drawStrap();frontTex.needsUpdate=backTex.needsUpdate=strapTex.needsUpdate=true;resize();resetPose(!reduce);const cta=stageEl.querySelector(ctaSel);if(cta)requestAnimationFrame(()=>cta.classList.add('show'));frame()};
+    const go=()=>{drawFront();drawBack();drawStrap();frontTex.needsUpdate=backTex.needsUpdate=strapTex.needsUpdate=true;resize();resetPose(!reduce);const cta=stageEl.querySelector(ctaSel);if(cta)requestAnimationFrame(()=>cta.classList.add('show'));frame();canvas.dispatchEvent(new Event('lanyard:ready'))};
     const fonts=document.fonts?Promise.all([document.fonts.load('400 40px Inter'),document.fonts.load('600 40px Inter'),document.fonts.load('800 40px Unbounded'),document.fonts.load('900 40px Unbounded')]):Promise.resolve();
     const photoP=photo?new Promise(res=>{const img=new Image();if(/^https?:/.test(photo))img.crossOrigin='anonymous';img.onload=()=>{userPhoto=img;res()};img.onerror=()=>res();img.src=photo}):Promise.resolve();
     Promise.race([Promise.all([fonts,photoP]),new Promise(r=>setTimeout(r,1800))]).finally(go);
   }
   return {init,nudge};
 })();
+export default Lanyard;

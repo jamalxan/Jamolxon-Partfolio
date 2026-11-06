@@ -1,0 +1,4 @@
+.render/
+.site/
+.old-site/
+tests/visual/out/

@@ -1,0 +1,31 @@
+/* lanyard.js ishlatadigan Three.js (r128) sinflari — faqat shular bundle'ga tushadi.
+   Har biri o'z manba faylidan import qilinadi: butun three.module.js tortilmaydi. */
+export { WebGLRenderer } from 'three/src/renderers/WebGLRenderer.js';
+export { Scene } from 'three/src/scenes/Scene.js';
+export { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera.js';
+export { HemisphereLight } from 'three/src/lights/HemisphereLight.js';
+export { DirectionalLight } from 'three/src/lights/DirectionalLight.js';
+export { Group } from 'three/src/objects/Group.js';
+export { Mesh } from 'three/src/objects/Mesh.js';
+export { BufferGeometry } from 'three/src/core/BufferGeometry.js';
+export { BufferAttribute } from 'three/src/core/BufferAttribute.js';
+export { Raycaster } from 'three/src/core/Raycaster.js';
+export { Clock } from 'three/src/core/Clock.js';
+export { MeshStandardMaterial } from 'three/src/materials/MeshStandardMaterial.js';
+export { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial.js';
+export { CanvasTexture } from 'three/src/textures/CanvasTexture.js';
+export { Shape } from 'three/src/extras/core/Shape.js';
+export { Path } from 'three/src/extras/core/Path.js';
+export { CatmullRomCurve3 } from 'three/src/extras/curves/CatmullRomCurve3.js';
+export { ShapeGeometry } from 'three/src/geometries/ShapeGeometry.js';
+export { ExtrudeGeometry } from 'three/src/geometries/ExtrudeGeometry.js';
+export { PlaneGeometry } from 'three/src/geometries/PlaneGeometry.js';
+export { BoxGeometry } from 'three/src/geometries/BoxGeometry.js';
+export { TorusGeometry } from 'three/src/geometries/TorusGeometry.js';
+export { CylinderGeometry } from 'three/src/geometries/CylinderGeometry.js';
+export { SphereGeometry } from 'three/src/geometries/SphereGeometry.js';
+export { Vector2 } from 'three/src/math/Vector2.js';
+export { Vector3 } from 'three/src/math/Vector3.js';
+export { Quaternion } from 'three/src/math/Quaternion.js';
+export * as MathUtils from 'three/src/math/MathUtils.js';
+export { sRGBEncoding, RepeatWrapping, DoubleSide } from 'three/src/constants.js';
