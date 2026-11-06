@@ -121,8 +121,11 @@ frontend/responsive-shots", retention-days: 7 }
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
           ssh -i ~/.ssh/key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes jxdeploy@185.237.97.126 "staging ${GITHUB_SHA}"
       - name: E2E on staging
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_JX_KEY }}
         run: |
           set -e
+          if [ -z "$DEPLOY_KEY" ]; then echo "::warning::deploy skipped, so E2E skipped too"; exit 0; fi
           for p in / /loyihalar/ /loyihalar/socialauto/ /xizmatlar/crm-erp/ /blog/ /taklif/ /sitemap.xml /robots.txt; do
             curl -fsS -o /dev/null -w "%{http_code} $p\n" "https://staging.jamolxon.uz$p"
           done
@@ -147,6 +150,9 @@ frontend/responsive-shots", retention-days: 7 }
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
           ssh -i ~/.ssh/key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes jxdeploy@185.237.97.126 "production ${GITHUB_SHA}"
       - name: Smoke
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_JX_KEY }}
         run: |
+          if [ -z "$DEPLOY_KEY" ]; then echo "::warning::deploy skipped, so smoke skipped too"; exit 0; fi
           for p in / /loyihalar/ /blog/ /taklif/ /sitemap.xml; do curl -fsS -o /dev/null "https://jamolxon.uz$p"; done
           test "$(curl -s -o /dev/null -w '%{http_code}' https://jamolxon.uz/api/v1/openapi.json)" = 404
