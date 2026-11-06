@@ -1,11 +1,12 @@
+import './native-globals'
 import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
-
-// Lazy marshrutlar sekin CI/Windows'da birinchi marta kompilyatsiya qilinadi
-configure({ asyncUtilTimeout: 10_000 })
 import { afterAll, afterEach, beforeAll, vi } from 'vitest'
 import { server } from '@/mocks/node'
 import { resetMockDb } from '@/mocks/handlers'
+
+// Lazy marshrutlar sekin CI/Windows'da birinchi marta kompilyatsiya qilinadi
+configure({ asyncUtilTimeout: 20_000 })
 
 // jsdom'da yo'q brauzer API'lari
 if (!window.matchMedia) {
@@ -40,7 +41,6 @@ if (!('ResizeObserver' in window)) {
   class PatchedRequest extends NativeRequest {
     constructor(input: RequestInfo | URL, init?: RequestInit) {
       if (init?.signal) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { signal: _s, ...rest } = init
         super(input, rest)
       } else {

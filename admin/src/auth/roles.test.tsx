@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
-import { renderApp } from '@/test/utils'
+import { beforeAll, describe, expect, it } from 'vitest'
+import { preloadPages, renderApp } from '@/test/utils'
 
 describe('Rollar', () => {
   it("editor menyuda Sozlamalar/Foydalanuvchilar/Audit'ni ko'rmaydi", async () => {
@@ -40,3 +40,5 @@ describe('Rollar', () => {
     expect(await screen.findByLabelText('Chat ID (bildirishnomalar)')).toHaveValue('123456789')
   })
 })
+
+beforeAll(preloadPages, 300_000)

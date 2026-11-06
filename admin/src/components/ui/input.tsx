@@ -32,6 +32,7 @@ export const Label = React.forwardRef<HTMLLabelElement, React.LabelHTMLAttribute
 )
 Label.displayName = 'Label'
 
-export function Checkbox({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input type="checkbox" className={cn('h-4 w-4 rounded accent-[#CDF73D]', className)} {...props} />
-}
+export const Checkbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(({ className, ...props }, ref) => (
+  <input ref={ref} type="checkbox" className={cn('h-4 w-4 rounded accent-[#CDF73D]', className)} {...props} />
+))
+Checkbox.displayName = 'Checkbox'

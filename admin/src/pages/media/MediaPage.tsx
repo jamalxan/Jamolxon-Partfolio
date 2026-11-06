@@ -59,7 +59,11 @@ function Uploader() {
     if (!file || !file.type.startsWith('image/') || typeof FileReader === 'undefined') return
     const reader = new FileReader()
     reader.onload = () => setPreviewUrl(typeof reader.result === 'string' ? reader.result : null)
-    reader.readAsDataURL(file)
+    try {
+      reader.readAsDataURL(file)
+    } catch {
+      return // preview ixtiyoriy
+    }
     return () => reader.abort()
   }, [file])
 

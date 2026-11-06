@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
-import { renderApp } from '@/test/utils'
+import { beforeAll, describe, expect, it } from 'vitest'
+import { preloadPages, renderApp } from '@/test/utils'
 import { db } from '@/mocks/handlers'
 
 const png = () => new File([new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10])], 'rasm.png', { type: 'image/png' })
@@ -40,3 +40,5 @@ describe('Media', () => {
     expect(screen.getByText('Loyiha: SocialAuto')).toBeInTheDocument()
   })
 })
+
+beforeAll(preloadPages, 300_000)

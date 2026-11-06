@@ -1,12 +1,17 @@
 import { screen, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
-import { describe, expect, it } from 'vitest'
-import { renderApp } from '@/test/utils'
+import { beforeAll, describe, expect, it } from 'vitest'
+import { preloadPages, renderApp } from '@/test/utils'
 import { server } from '@/mocks/node'
 import { B, db } from '@/mocks/handlers'
 import { draftKey } from '@/hooks/useAutosave'
 import { projectToForm } from './ProjectEditPage'
 import type { Project } from '@/lib/types'
+
+async function fill(user: ReturnType<typeof renderApp>['user'], el: HTMLElement, text: string) {
+  await user.click(el)
+  await user.paste(text)
+}
 
 const p1 = () => db.projects.find((p) => p.id === 'p-1') as unknown as Project
 
@@ -21,7 +26,7 @@ describe('Loyiha formasi', () => {
     )
     const { user } = renderApp('/loyihalar/yangi')
     const slug = await screen.findByLabelText('Slug (URL)')
-    await user.type(slug, 'Yomon Slug!')
+    await fill(user, slug, 'Yomon Slug!')
     await user.click(screen.getByRole('button', { name: /Saqlash/ }))
     expect(await screen.findByText(/Slug faqat kichik lotin harflari/)).toBeInTheDocument()
     expect(screen.getByText(/Sarlavha majburiy/)).toBeInTheDocument()
@@ -47,8 +52,8 @@ describe('Loyiha formasi', () => {
       ),
     )
     const { user } = renderApp('/loyihalar/yangi')
-    await user.type(await screen.findByLabelText('Sarlavha'), 'Yangi loyiha')
-    await user.type(screen.getByLabelText('Slug (URL)'), 'socialauto')
+    await fill(user, await screen.findByLabelText('Sarlavha'), 'Yangi loyiha')
+    await fill(user, screen.getByLabelText('Slug (URL)'), 'socialauto')
     await user.click(screen.getByRole('button', { name: /Saqlash/ }))
     expect(await screen.findByText('Bu slug band')).toBeInTheDocument()
     expect(screen.getByText('Bunday sarlavha bor')).toBeInTheDocument()
@@ -57,16 +62,16 @@ describe('Loyiha formasi', () => {
 
   it('mock backend ham band slugni 422 bilan qaytaradi', async () => {
     const { user } = renderApp('/loyihalar/yangi')
-    await user.type(await screen.findByLabelText('Sarlavha'), 'Takror')
-    await user.type(screen.getByLabelText('Slug (URL)'), 'vocably')
+    await fill(user, await screen.findByLabelText('Sarlavha'), 'Takror')
+    await fill(user, screen.getByLabelText('Slug (URL)'), 'vocably')
     await user.click(screen.getByRole('button', { name: /Saqlash/ }))
     expect(await screen.findByText('Bu slug band')).toBeInTheDocument()
   })
 
   it("yangi loyiha yaratiladi va tahrirlash sahifasiga o'tadi", async () => {
     const { user, router } = renderApp('/loyihalar/yangi')
-    await user.type(await screen.findByLabelText('Sarlavha'), 'CRM tizim')
-    await user.type(screen.getByLabelText('Slug (URL)'), 'crm-tizim')
+    await fill(user, await screen.findByLabelText('Sarlavha'), 'CRM tizim')
+    await fill(user, screen.getByLabelText('Slug (URL)'), 'crm-tizim')
     await user.click(screen.getByRole('button', { name: /Saqlash/ }))
     await waitFor(() => expect(router.state.location.pathname).toMatch(/^\/loyihalar\/[0-9a-f-]{36}$/))
     const created = db.projects.find((p) => p.slug === 'crm-tizim')
@@ -79,7 +84,7 @@ describe('Loyiha formasi', () => {
     // Boshqa oynada kimdir saqladi
     Object.assign(p1(), { title: 'SocialAuto 2.0', updated_at: '2026-11-06T12:00:00.000Z' })
     await user.clear(title)
-    await user.type(title, 'Mening tahririm')
+    await fill(user, title, 'Mening tahririm')
     await user.click(screen.getByRole('button', { name: /Saqlash/ }))
     expect(await screen.findByText("Bu yozuv o'zgargan, yangilang")).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /Yangilash/ }))
@@ -95,7 +100,7 @@ describe('Loyiha formasi', () => {
     const { user } = renderApp('/loyihalar/p-1')
     const title = await screen.findByDisplayValue('SocialAuto')
     await user.clear(title)
-    await user.type(title, 'SocialAuto Pro')
+    await fill(user, title, 'SocialAuto Pro')
     await user.keyboard('{Control>}s{/Control}')
     await waitFor(() => expect(p1().title).toBe('SocialAuto Pro'))
     expect(body).toMatchObject({ title: 'SocialAuto Pro', updated_at: '2026-11-01T10:00:00.000Z' })
@@ -131,3 +136,5 @@ describe('Avtosaqlash', () => {
     expect(localStorage.getItem(draftKey('projects', 'p-1'))).toBeNull()
   })
 })
+
+beforeAll(preloadPages, 300_000)

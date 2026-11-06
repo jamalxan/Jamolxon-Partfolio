@@ -1,6 +1,6 @@
 import { screen, waitFor, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
-import { renderApp } from '@/test/utils'
+import { beforeAll, describe, expect, it } from 'vitest'
+import { preloadPages, renderApp } from '@/test/utils'
 import { server } from '@/mocks/node'
 import { db } from '@/mocks/handlers'
 
@@ -54,3 +54,5 @@ describe('Leadlar', () => {
     expect(await screen.findByRole('button', { name: /CSV eksport/ })).toBeInTheDocument()
   })
 })
+
+beforeAll(preloadPages, 300_000)

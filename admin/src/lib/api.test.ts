@@ -93,14 +93,15 @@ describe('api client', () => {
       http.get(`${B}/y`, () => HttpResponse.json({ type: 'rate_limited', title: 'x', status: 429 }, { status: 429, headers: { 'Retry-After': '30' } })),
       http.get(`${B}/z`, () => HttpResponse.json({ type: 'internal_error', title: 'Traceback: secret', status: 500 }, { status: 500 })),
     )
-    const e1 = await api('/x', { method: 'POST', body: {} }).catch((e) => e as ApiError)
+    const fail = (p: Promise<unknown>): Promise<ApiError> => p.then(() => Promise.reject(new Error('xato kutilgan')), (e: ApiError) => e)
+    const e1 = await fail(api('/x', { method: 'POST', body: {} }))
     expect(e1.status).toBe(422)
     expect(e1.fieldErrors).toEqual([{ field: 'slug', msg: 'band' }])
     expect(e1.problem.request_id).toBe('r1')
-    const e2 = await api('/y').catch((e) => e as ApiError)
+    const e2 = await fail(api('/y'))
     expect(e2.retryAfter).toBe(30)
     expect(errorMessage(e2)).toContain('30 soniyadan keyin')
-    const e3 = await api('/z').catch((e) => e as ApiError)
+    const e3 = await fail(api('/z'))
     // Ichki xato matni ko'rsatilmaydi
     expect(errorMessage(e3)).not.toContain('Traceback')
   })

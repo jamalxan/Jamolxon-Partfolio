@@ -29,6 +29,10 @@ export default defineConfig(({ mode }) => {
       css: false,
       restoreMocks: true,
       testTimeout: 60_000,
+      hookTimeout: 300_000,
+      // Sekin mashinalarda worker'lar bir-birini bo'g'ib qo'ymasin
+      maxWorkers: 2,
+      minWorkers: 1,
     },
   }
 })

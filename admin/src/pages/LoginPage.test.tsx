@@ -1,6 +1,6 @@
 import { screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
-import { renderApp } from '@/test/utils'
+import { beforeAll, describe, expect, it } from 'vitest'
+import { preloadPages, renderApp } from '@/test/utils'
 import { MOCK_BACKUP_CODE, MOCK_PASSWORD, MOCK_TOTP } from '@/mocks/seed'
 
 async function fillCredentials(user: ReturnType<typeof renderApp>['user'], email: string, password = MOCK_PASSWORD) {
@@ -79,3 +79,5 @@ describe('Login', () => {
     expect(await screen.findByText('Bugungi holat')).toBeInTheDocument()
   })
 })
+
+beforeAll(preloadPages, 300_000)

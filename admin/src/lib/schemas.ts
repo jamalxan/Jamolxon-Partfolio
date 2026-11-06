@@ -131,7 +131,8 @@ export const MEDIA_MAX_BYTES = 10 * 1024 * 1024
 
 export const mediaUploadSchema = z.object({
   file: z
-    .instanceof(File, { message: 'Fayl tanlang' })
+    // instanceof o'rniga duck-typing: turli muhitlardagi (brauzer/Node) File klasslari bilan ishlaydi
+    .custom<File>((v) => !!v && typeof v === 'object' && 'name' in v && 'size' in v && 'type' in v, { message: 'Fayl tanlang' })
     .refine((f) => f.size <= MEDIA_MAX_BYTES, 'Fayl 10 MB dan oshmasin')
     .refine((f) => (MEDIA_MIME as readonly string[]).includes(f.type), 'Faqat JPEG, PNG, WebP, AVIF yoki PDF'),
   alt: z.string().trim().min(1, 'Alt matn majburiy').max(300, 'Alt matn 300 belgidan oshmasin'),

@@ -5,6 +5,20 @@ import { createQueryClient, Providers } from '@/App'
 import { routes } from '@/routes'
 import { loginAs } from '@/mocks/handlers'
 
+/**
+ * Lazy sahifalarni oldindan yuklash (beforeAll'da): sekin mashinada birinchi test
+ * kompilyatsiya vaqtiga tushib qolmasin.
+ */
+export async function preloadPages() {
+  await Promise.all([
+    import('@/pages/projects/ProjectEditPage'),
+    import('@/pages/projects/ProjectsListPage'),
+    import('@/pages/leads/LeadsPage'),
+    import('@/pages/media/MediaPage'),
+    import('@/pages/settings/SettingsPage'),
+  ])
+}
+
 export function renderApp(path: string, opts: { as?: 'u-owner' | 'u-editor' | null } = {}) {
   const as = opts.as === undefined ? 'u-owner' : opts.as
   if (as) loginAs(as)
