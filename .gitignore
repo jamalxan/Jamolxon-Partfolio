@@ -22,3 +22,5 @@ dist/
 .vscode/
 var/
 *.log
+# agent worktrees
+.claude/
