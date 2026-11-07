@@ -77,10 +77,20 @@ async def export_csv(session: DB, user: Owner, status: str | None = Query(None, 
         # Neutralize spreadsheet formula injection.
         cells = [r.number, r.created_at.isoformat(), r.status, r.name, r.contact_type, r.contact_value,
                  r.service_slug, r.budget_range or "", r.deadline or "", r.message, r.source_page, r.spam_score]
-        w.writerow([("'" + c) if isinstance(c, str) and c[:1] in ("=", "+", "-", "@") and c != r.contact_value
-                    else c for c in cells])
+        w.writerow([_csv_safe(c) for c in cells])
     return StreamingResponse(iter([buf.getvalue()]), media_type="text/csv; charset=utf-8",
                              headers={"Content-Disposition": 'attachment; filename="leads.csv"'})
+
+
+CSV_FORMULA_PREFIXES = ("=", "+", "-", "@", "\t", "\r")
+
+
+def _csv_safe(value: object) -> object:
+    """Neutralize spreadsheet formula injection in every text cell (phone numbers like +998... included:
+    the leading apostrophe is hidden by Excel/Sheets and keeps the value as text)."""
+    if isinstance(value, str) and value.startswith(CSV_FORMULA_PREFIXES):
+        return "'" + value
+    return value
 
 
 async def _get(session: DB, lead_id: uuid.UUID) -> Lead:

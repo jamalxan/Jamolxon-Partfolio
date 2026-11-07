@@ -24,7 +24,8 @@ MAX_BYTES = 10 * 1024 * 1024
 WIDTHS = (480, 960, 1440, 2048)
 IMAGE_FORMATS = {"JPEG": ("image/jpeg", "jpg"), "PNG": ("image/png", "png"), "WEBP": ("image/webp", "webp"),
                  "AVIF": ("image/avif", "avif")}
-Image.MAX_IMAGE_PIXELS = 40_000_000  # decompression-bomb guard
+MAX_PIXELS = 25_000_000  # 25 MP is plenty for portfolio images
+Image.MAX_IMAGE_PIXELS = MAX_PIXELS  # decompression-bomb guard
 
 
 @dataclass
@@ -69,6 +70,10 @@ def process_image(data: bytes) -> tuple[str, bytes, int, int, dict[str, bytes]]:
         probe = Image.open(io.BytesIO(data))
         probe.verify()
         src = Image.open(io.BytesIO(data))
+        # Pillow only raises above 2x MAX_IMAGE_PIXELS; refuse anything over the limit before decoding,
+        # otherwise several full-size copies can exceed the API container's memory limit.
+        if src.width * src.height > MAX_PIXELS:
+            raise Problem(413, "payload_too_large", "Rasm juda katta (25 megapikseldan oshmasin)")
         fmt = src.format or ""
         src.load()
     except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as e:

@@ -1,6 +1,7 @@
 """Public API (no auth). Cached in Redis for 5 minutes, ETag + Cache-Control for the CDN (TZ 4/9)."""
 
 import hashlib
+import hmac
 import json
 import logging
 import uuid
@@ -239,7 +240,8 @@ async def telegram_webhook(request: Request, session: DB) -> dict[str, bool]:
     """Inline buttons on lead messages. Only the configured chat may change statuses (TZ 7)."""
     s = get_settings()
     secret = s.telegram_webhook_secret.get_secret_value() if s.telegram_webhook_secret else ""
-    if not secret or request.headers.get("x-telegram-bot-api-secret-token") != secret:
+    given = request.headers.get("x-telegram-bot-api-secret-token", "")
+    if not secret or not hmac.compare_digest(given.encode(), secret.encode()):
         raise Problem(403, "forbidden")
     update = await request.json()
     cq = update.get("callback_query") or {}

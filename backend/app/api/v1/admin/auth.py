@@ -48,6 +48,8 @@ from app.services.audit import record
 router = APIRouter(prefix="/auth", tags=["admin-auth"])
 
 BAD_CREDENTIALS = "Email yoki parol noto'g'ri"
+ACCOUNT_LOCK_FACTOR = 4  # failed attempts per account (all IPs) = login_max_attempts * this
+TOTP_REPLAY_SECONDS = 120  # > TOTP validity (30 s step, valid_window=1)
 
 
 def _cookie(response: Response, name: str, value: str, max_age: int, path: str, httponly: bool = True) -> None:
@@ -104,11 +106,17 @@ async def login(body: LoginIn, request: Request, response: Response, session: DB
     else:
         dummy_verify()  # equal timing for unknown emails
         ok = False
+    # Account-level lock: applies from every IP (the per-IP key alone is bypassed by rotating addresses).
+    if user is not None and user.locked_until is not None and user.locked_until > datetime.now(UTC):
+        raise Problem(423, "locked", headers={"Retry-After": str(s.login_window_minutes * 60)})
     if not ok or user is None or not user.is_active:
         allowed, _ = await hit(key, s.login_max_attempts, s.login_window_minutes * 60)
+        # Same email from any IP: a wider budget, then the account itself is locked for the window.
+        any_ip_allowed, _ = await hit(f"login:any:{body.email.lower()}", s.login_max_attempts * ACCOUNT_LOCK_FACTOR,
+                                      s.login_window_minutes * 60)
         if user is not None:
             user.failed_logins += 1
-        if not allowed or await peek(key) >= s.login_max_attempts:
+        if not allowed or not any_ip_allowed or await peek(key) >= s.login_max_attempts:
             await hit(lock_key, 1, s.login_window_minutes * 60)
             if user is not None:
                 user.locked_until = datetime.now(UTC) + timedelta(minutes=s.login_window_minutes)
@@ -155,7 +163,12 @@ async def twofa_verify(body: VerifyIn, request: Request, response: Response, ses
         raise field_error("code", "Avval 2FA'ni sozlang")
     ok = False
     if body.code:
-        ok = verify_totp(decrypt(user.totp_secret), body.code)
+        code = body.code.strip().replace(" ", "")
+        ok = verify_totp(decrypt(user.totp_secret), code)
+        if ok:
+            # A TOTP code is single-use: an intercepted code cannot be replayed while it is still valid.
+            first_use, _ = await hit(f"2fa:used:{user.id}:{code}", 1, TOTP_REPLAY_SECONDS)
+            ok = first_use
     elif body.backup_code and user.totp_enabled:
         remaining = []
         for h in user.backup_codes:
@@ -196,7 +209,9 @@ async def refresh(request: Request, response: Response, session: DB) -> dict[str
     raw = request.cookies.get(REFRESH_COOKIE)
     if not raw:
         raise Problem(401, "unauthorized")
-    token = await session.scalar(select(RefreshToken).where(RefreshToken.token_hash == sha256_hex(raw)))
+    # Row lock: two parallel refreshes with the same (stolen) token must not both rotate it.
+    token = await session.scalar(select(RefreshToken).where(RefreshToken.token_hash == sha256_hex(raw))
+                                 .with_for_update())
     now = datetime.now(UTC)
     if token is None:
         raise Problem(401, "unauthorized")

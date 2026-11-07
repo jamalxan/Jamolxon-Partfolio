@@ -154,3 +154,36 @@ async def test_audit_log_is_append_only(client: AsyncClient, owner: User) -> Non
             raise AssertionError("delete must fail")
         except Exception as e:
             assert "append-only" in str(e)
+
+
+async def test_totp_code_cannot_be_replayed(client: AsyncClient) -> None:
+    u, secret = await make_user()
+    code = pyotp.TOTP(secret).now()
+    await client.post("/api/v1/admin/auth/login", json={"email": u.email, "password": PASSWORD})
+    assert (await client.post("/api/v1/admin/auth/2fa/verify", json={"code": code})).status_code == 200
+    # an intercepted code is useless: a second login inside the same 30 s step is refused
+    await client.post("/api/v1/admin/auth/login", json={"email": u.email, "password": PASSWORD})
+    r = await client.post("/api/v1/admin/auth/2fa/verify", json={"code": code})
+    assert r.status_code == 422
+
+
+async def test_account_lock_applies_from_every_ip(client: AsyncClient) -> None:
+    """Rotating IPs (4 tries each, under the per-IP limit) still locks the account itself."""
+    from httpx import ASGITransport
+
+    from app.main import app
+
+    u, _ = await make_user()
+    for i in range(6):
+        async with AsyncClient(transport=ASGITransport(app=app, client=(f"203.0.113.{i}", 1000)),
+                               base_url="http://test") as c:
+            for _ in range(4):
+                r = await c.post("/api/v1/admin/auth/login", json={"email": u.email, "password": "xato-parol"})
+                assert r.status_code in (401, 423)
+    async with get_sessionmaker()() as s:
+        locked = await s.get(User, u.id)
+        assert locked is not None and locked.locked_until is not None
+    async with AsyncClient(transport=ASGITransport(app=app, client=("198.51.100.7", 1000)),
+                           base_url="http://test") as fresh:
+        r = await fresh.post("/api/v1/admin/auth/login", json={"email": u.email, "password": PASSWORD})
+        assert r.status_code == 423  # correct password, brand-new IP: still locked

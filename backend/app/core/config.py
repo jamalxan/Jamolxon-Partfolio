@@ -4,8 +4,15 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, SecretStr
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_DEV_SECRETS = frozenset({
+    "dev-secret-key-change-me-dev-secret-key-change-me",
+    "dev-jwt-key-change-me-dev-jwt-key-change-me-0000",
+    "ZGV2LWVuY3J5cHRpb24ta2V5LTMyLWJ5dGVzLWxvbmc=",
+    "dev-ip-salt",
+})
 
 
 class Settings(BaseSettings):
@@ -26,7 +33,9 @@ class Settings(BaseSettings):
     ip_hash_salt: SecretStr = SecretStr("dev-ip-salt")
 
     cookie_secure: bool = True
-    cors_origins: list[str] = Field(default_factory=lambda: ["https://jamolxon.uz", "https://admin.jamolxon.uz"])
+    # The admin SPA calls its API same-origin, so no cross-origin access is needed by default (the public site
+    # must never be able to make credentialed calls to the admin API).
+    cors_origins: list[str] = Field(default_factory=list)
     trusted_proxies: str = "*"
 
     access_token_minutes: int = 15
@@ -65,6 +74,22 @@ class Settings(BaseSettings):
 
     sentry_dsn: str = ""
     heartbeat_url: str = ""
+
+    @model_validator(mode="after")
+    def _refuse_weak_secrets_outside_dev(self) -> "Settings":
+        """Staging/production must never run with the public dev defaults, empty or short keys (TZ 8)."""
+        if self.env not in ("staging", "production"):
+            return self
+        problems: list[str] = []
+        for name in ("secret_key", "jwt_key", "encryption_key", "ip_hash_salt"):
+            value = getattr(self, name).get_secret_value()
+            if value in _DEV_SECRETS or len(value) < 32:
+                problems.append(f"{name.upper()} is missing, a dev default or shorter than 32 characters")
+        if not self.cookie_secure:
+            problems.append("COOKIE_SECURE must be true")
+        if problems:
+            raise ValueError(f"unsafe {self.env} settings: " + "; ".join(problems))
+        return self
 
     @property
     def is_prod(self) -> bool:

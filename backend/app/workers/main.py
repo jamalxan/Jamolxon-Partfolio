@@ -4,6 +4,7 @@ scheduled publishing, 24h reminders for untouched leads, 24-month anonymization,
 Run: arq app.workers.main.WorkerSettings
 """
 
+import html
 import logging
 import uuid
 from datetime import UTC, datetime, timedelta
@@ -79,7 +80,8 @@ async def send_client_confirmation(lead: Lead) -> None:
 
 async def send_alert(ctx: dict[str, Any], text: str) -> None:
     try:
-        await notify.send_telegram(text)
+        # Alerts are plain text but Telegram parses HTML: escape user-supplied parts (lead names, login emails).
+        await notify.send_telegram(html.escape(text, quote=False))
     except notify.NotifyError:
         log.warning("alert not delivered", extra={"alert": text})
 
