@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% from "_macros.html" import shead, svc_card, offer_card, pcard, post_card with context %}
+{% block head_extra %}
+{# Portret ham statik beyjik, ham 3D beyjik teksturasi — darhol yuklanib, 3D tezroq tayyor bo'lsin. #}
+<link rel="preload" as="image" href="/assets/img/portrait.jpg" fetchpriority="high">
+{% endblock %}
 {% block main %}
 <section class="sec hero" data-theme="maroon" id="top">
   <div class="hero__giant" aria-hidden="true">JAMOLXON</div>

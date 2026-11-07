@@ -11,13 +11,24 @@
 .shead.center h1{grid-column:1}
 @media(max-width:700px){.shead h1{grid-column:1}}
 
-/* 3D yuklanguncha (yoki reduced-motion / saveData bo'lsa doim) — statik beyjik.
+/* Statik beyjik (placeholder): FAQAT JS yo'q / reduced-motion / saveData / WebGL yo'q holatlarida ko'rinadi.
+   3D yo'li tanlanganda (JS .is-badge3d qo'yadi) umuman ko'rsatilmaydi — ikki xil karta va "sakrash" bo'lmasin.
    absolute: layout'ga ta'sir qilmaydi (CLS = 0). */
 .hero__badgeph{position:absolute;left:50%;top:19.5%;height:52%;width:auto;max-width:none;aspect-ratio:2.75/3.85;transform:translateX(-50%) rotate(-2deg);
   object-fit:cover;object-position:50% 22%;box-sizing:border-box;padding-bottom:22%;background:#FFF1DC;border-radius:16px;
   box-shadow:0 30px 60px -30px rgba(0,0,0,.6);filter:grayscale(1) contrast(1.06);z-index:0;pointer-events:none!important;transition:opacity .5s ease}
 .hero__badgeph.is-off{opacity:0}
+.hero.is-badge3d .hero__badgeph{display:none!important}
 @media(max-width:960px) and (max-aspect-ratio:11/10){.hero__badgeph{top:calc(21% + min(58px,20%));height:56%}}
+
+/* Three.js beyjik canvasi: birinchi kadr render bo'lmaguncha ko'rinmaydi (opacity 0), keyin silliq fade-in.
+   Shu sababli yarim tayyor karta ko'rinmaydi va boshqa joyga sakramaydi. */
+#badge{opacity:0;transition:opacity .55s ease;will-change:opacity}
+#badge.is-in{opacity:1}
+/* Osilish ipi haqidagi maslahat beyjik tayyor bo'lgandan keyingina chiqadi. */
+.hero__hint{opacity:0;transition:opacity .4s ease}
+.hero.is-badge3d .hero__hint{opacity:1}
+@media(prefers-reduced-motion:reduce){#badge{transition:none}.hero__hint,.hero__badgeph{transition:none}}
 
 /* taklif formasi: rozilik, honeypot, xato maydonlar */
 .form legend em{font-style:normal;color:var(--yellow)}

@@ -33,7 +33,8 @@ try {
   await page.waitForTimeout(2500);
   check(requests.some(u => /\/assets\/three\.[^/]+\.js$/.test(u)), 'three chunk loaded lazily on home');
   check(!requests.some(u => /fonts\.(googleapis|gstatic)\.com/.test(u)), 'no Google Fonts requests');
-  check(await page.$eval('.hero__badgeph', e => e.classList.contains('is-off')), 'static badge hidden after 3D is ready');
+  check(await page.$eval('.hero__badgeph', e => getComputedStyle(e).display === 'none'), 'static badge hidden on 3D path (no jump)');
+  check(await page.$eval('#badge', c => c.classList.contains('is-in')), 'badge faded in after first frame');
   check(await page.$eval('#badge', c => c.width > 300), 'WebGL canvas sized');
   check(await page.$eval('.foot [href^="mailto:"]', a => a.textContent.includes('@')), 'footer email wired');
 
@@ -52,7 +53,7 @@ try {
   check(true, 'popstate back -> catalog');
   await page.goBack();
   await page.waitForFunction(() => document.getElementById('app').dataset.view === 'home');
-  check(await page.$eval('.hero__badgeph', e => e.classList.contains('is-off')), 'back to home: badge reused');
+  check(await page.$eval('#badge', c => c.classList.contains('is-in')) && await page.$eval('.hero__badgeph', e => getComputedStyle(e).display === 'none'), 'back to home: badge reused & visible');
 
   for (const [hash, want] of [['#loyiha-vocably', '/loyihalar/vocably/'], ['#xizmat-crm-erp', '/xizmatlar/crm-erp/'], ['#blog', '/blog/'], ['#blog-comment-to-dm', '/blog/comment-to-dm/'], ['#loyihalar', '/loyihalar/'], ['#taklif', '/taklif/'], ['#s-yechimlar', '/#yechimlar']]) {
     const p2 = await ctx.newPage();

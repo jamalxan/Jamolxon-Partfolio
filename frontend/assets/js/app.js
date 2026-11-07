@@ -129,12 +129,31 @@ function wireTabs(){
 /* ---------- beyjik: Three.js alohida chunk, hero ko'ringanda idle paytda ---------- */
 let Lanyard=null, lanyardLoading=false;
 const idle=cb=>('requestIdleCallback' in window)?requestIdleCallback(cb,{timeout:1500}):setTimeout(cb,200);
+function hasWebGL(){try{const c=document.createElement('canvas');return !!(window.WebGLRenderingContext&&(c.getContext('webgl')||c.getContext('experimental-webgl')));}catch(_){return false}}
 function startBadge(){
   const canvas=document.getElementById('badge'); if(!canvas) return;
-  const ph=app.querySelector('.hero__badgeph'), hide=()=>{if(ph)ph.classList.add('is-off')};
-  if(reduce||saveData){const h=app.querySelector('.hero__hint');if(h)h.style.display='none';return} // statik beyjik qoladi
-  if(Lanyard){Lanyard.init(canvas,AVATAR_PHOTO,MAIL);hide();return}
-  canvas.addEventListener('lanyard:ready',hide,{once:true});
+  const hero=canvas.closest('.hero'), hint=app.querySelector('.hero__hint');
+  const hideHint=()=>{if(hint)hint.style.display='none'};
+  // Statik beyjik (placeholder) qoladi: harakat kam so'ralgan, trafik tejash yoki WebGL yo'q bo'lsa.
+  if(reduce||saveData||!hasWebGL()){hideHint();return}
+  // 3D yo'li: placeholder DARHOL yashiriladi (ikki xil karta/sakrash bo'lmasin), canvas opacity 0 da turadi.
+  // Birinchi kadr render bo'lib, lanyard:ready kelgach canvas silliq fade-in bo'ladi va maslahat chiqadi.
+  if(hero)hero.classList.add('is-badge3d');
+  const ready=c=>()=>requestAnimationFrame(()=>c.classList.add('is-in'));
+  const fail=()=>{ // 3D yuklanmadi/ishlamadi → statik beyjikka qaytamiz, bo'sh joy qolmasin
+    clearTimeout(failTimer);
+    if(hero)hero.classList.remove('is-badge3d');
+    const c=document.getElementById('badge'); if(c){c.classList.remove('is-in');c.style.display='none'}
+    hideHint();
+  };
+  let failTimer=setTimeout(fail,12000);
+  if(Lanyard){ // SPA qayta kirish: beyjik allaqachon tayyor (lanyard:ready qayta chiqmaydi) — darhol ko'rsatamiz
+    clearTimeout(failTimer);
+    try{Lanyard.init(canvas,AVATAR_PHOTO,MAIL)}catch(_){fail();return}
+    const c=document.getElementById('badge'); if(c)requestAnimationFrame(()=>c.classList.add('is-in'));
+    return;
+  }
+  canvas.addEventListener('lanyard:ready',()=>{clearTimeout(failTimer);ready(canvas)()},{once:true});
   if(lanyardLoading) return;
   const io=new IntersectionObserver(en=>{
     if(!en.some(x=>x.isIntersecting)) return;
@@ -142,11 +161,11 @@ function startBadge(){
     idle(()=>import('./lanyard.js').then(m=>{
       Lanyard=m.default; lanyardLoading=false;
       const c=document.getElementById('badge'); if(!c) return; // foydalanuvchi boshqa sahifaga o'tgan
-      if(c!==canvas) c.addEventListener('lanyard:ready',()=>{const p=app.querySelector('.hero__badgeph');if(p)p.classList.add('is-off')},{once:true});
-      Lanyard.init(c,AVATAR_PHOTO,MAIL);
-    }).catch(()=>{lanyardLoading=false}));
+      if(c!==canvas) c.addEventListener('lanyard:ready',()=>{clearTimeout(failTimer);ready(c)()},{once:true});
+      try{Lanyard.init(c,AVATAR_PHOTO,MAIL)}catch(_){fail()}
+    }).catch(()=>{lanyardLoading=false;fail()}));
   });
-  io.observe(canvas.closest('.hero')||canvas);
+  io.observe(hero||canvas);
 }
 
 /* ---------- taklif formasi → POST /api/v1/leads ---------- */
