@@ -1,6 +1,8 @@
 # Hodisalar bo'yicha qo'llanma (INCIDENT)
 
-Server umumiy: faqat `jamolxon*` compose loyihalariga tegiladi. Caddy (`socialauto-caddy-1`) boshqa loyihalarniki ham, uni **restart qilmang**, faqat `caddy validate` + `caddy reload`.
+Server: 20.219.147.37 (Azure `test-server`), unda **vocably.uz** ham ishlaydi. Faqat `jamolxon*` compose loyihalariga tegiladi. Caddy (`jamolxon-caddy`) vocably'ning `media`/`ws` domenlarini ham beradi (`/opt/jamolxon/edge/vocably.caddy`): **restart qilmang**, faqat `caddy validate` + `caddy reload`, va `import /etc/caddy/vocably.caddy` qatorini o'chirmang.
+
+Sayt tashqaridan ochilmasa-yu, server ichida `curl -I http://127.0.0.1 -H 'Host: jamolxon.uz'` 308 qaytarsa: Azure NSG'da 80/443 inbound qoidasini tekshiring.
 
 ## Tez diagnostika
 ```bash
@@ -11,7 +13,7 @@ curl -fsS https://jamolxon.uz/api/v1/health; curl -fsS https://jamolxon.uz/api/v
 
 | Belgi | Ehtimoliy sabab | Harakat |
 |---|---|---|
-| Sayt 502 | nginx yoki Caddy'dan `jamolxon-nginx` ko'rinmaydi | `docker compose -p jamolxon up -d nginx`; Caddy tarmog'ini tekshiring (`socialauto_default`) |
+| Sayt 502 | nginx yoki Caddy'dan `jamolxon-nginx` ko'rinmaydi | `docker compose -p jamolxon up -d nginx`; Caddy tarmog'ini tekshiring (`jamolxon_edge`) |
 | Sayt ochiladi, forma xato | api yoki postgres yiqilgan | `logs api`, `/api/v1/ready` |
 | Lidlar keladi, Telegram'ga xabar yo'q | bot token / chat id, worker | admin → Tizim → navbat; `logs worker`; lid bazada saqlanadi, yo'qolmaydi |
 | Sayt eski kontentni ko'rsatadi | rebuild ishlamadi yoki CDN keshi | admin'da qayta yig'ish; Cloudflare'da purge |

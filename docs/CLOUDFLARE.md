@@ -1,13 +1,13 @@
 # DNS'ni Cloudflare'ga ko'chirish (jamolxon.uz)
 
-Hozir NS: `rdns1/2/3.ahost.uz`. Pochta ahost'da qoladi (mail.jamolxon.uz → 185.196.212.52), shuning uchun pochta yozuvlari **DNS only** (kulrang bulut) bo'lishi shart.
+Hozir NS: `rdns1/2/3.ahost.uz`; A yozuvlar (`@`, `admin`, `staging`, `admin.staging`) → 20.219.147.37 (2026-11-07). Pochta ahost'da qoladi (mail.jamolxon.uz → 185.196.212.52), shuning uchun pochta yozuvlari **DNS only** (kulrang bulut) bo'lishi shart.
 
 ## 1. Cloudflare'da zona qo'shish
 dash.cloudflare.com → Add a site → `jamolxon.uz` → Free. Avtomatik skanerlangan yozuvlarni quyidagi jadval bilan solishtiring, ortiqchasini o'chiring.
 
 | Turi | Nom | Qiymat | Proxy |
 |---|---|---|---|
-| A | `@` | 185.237.97.126 | Proxied (to'q sariq) |
+| A | `@` | 20.219.147.37 | Proxied (to'q sariq) |
 | CNAME | `www` | jamolxon.uz | Proxied |
 | CNAME | `admin` | jamolxon.uz | Proxied |
 | CNAME | `staging` | jamolxon.uz | Proxied |
