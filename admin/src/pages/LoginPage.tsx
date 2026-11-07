@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
-import { Copy, Download, KeyRound, Loader2, ShieldCheck } from 'lucide-react'
+import { Copy, Download, Eye, EyeOff, KeyRound, Loader2, ShieldCheck } from 'lucide-react'
 import { toast } from 'sonner'
 import type { z } from 'zod'
 import { api, isApiError } from '@/lib/api'
@@ -112,6 +112,7 @@ function FormAlert({ message }: { message: string | null }) {
 
 function CredentialsStep({ onResult }: { onResult: (r: LoginResult) => Promise<void> }) {
   const [error, setError] = React.useState<string | null>(null)
+  const [showPw, setShowPw] = React.useState(false)
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
@@ -142,7 +143,19 @@ function CredentialsStep({ onResult }: { onResult: (r: LoginResult) => Promise<v
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Parol</Label>
-            <Input id="password" type="password" autoComplete="current-password" aria-invalid={!!errors.password} {...form.register('password')} />
+            <div className="relative">
+              <Input id="password" type={showPw ? 'text' : 'password'} autoComplete="current-password" className="pr-10" aria-invalid={!!errors.password} {...form.register('password')} />
+              <button
+                type="button"
+                onClick={() => setShowPw((v) => !v)}
+                aria-label={showPw ? 'Parolni yashirish' : 'Parolni ko‘rsatish'}
+                aria-pressed={showPw}
+                title={showPw ? 'Parolni yashirish' : 'Parolni ko‘rsatish'}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+              >
+                {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
             <FieldError message={errors.password?.message} />
           </div>
           <Button type="submit" disabled={isSubmitting} className="w-full">
