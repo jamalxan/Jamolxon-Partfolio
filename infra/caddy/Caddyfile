@@ -1,6 +1,11 @@
 # Dedicated server Caddyfile (copied to /opt/jamolxon/edge/Caddyfile by server-setup.sh --edge).
+# The server also hosts vocably.uz: other projects drop their site blocks into /opt/jamolxon/edge/sites/<name>.caddy
+# (upstreams must be on the jamolxon_edge network), then reload Caddy.
 {
 	email jamolxonyoldashaliyev3@gmail.com
 }
 
 import /etc/caddy/jamolxon.caddy
+# vocably.uz (media.vocably.uz, ws.vocably.uz) — owned by the vocably project, not jamolxon
+import /etc/caddy/vocably.caddy
+import /etc/caddy/sites/*.caddy

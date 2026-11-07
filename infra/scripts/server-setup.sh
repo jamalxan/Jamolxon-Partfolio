@@ -33,7 +33,7 @@ systemctl daemon-reload
 systemctl enable --now jamolxon-backup@production.timer
 if [ "${2:-}" = "--edge" ]; then
   docker network inspect jamolxon_edge >/dev/null 2>&1 || docker network create jamolxon_edge >/dev/null
-  install -d -m 755 /opt/jamolxon/edge
+  install -d -m 755 /opt/jamolxon/edge /opt/jamolxon/edge/sites
   install -m 644 "$HERE/caddy/Caddyfile" "$HERE/caddy/jamolxon.caddy" /opt/jamolxon/edge/
   docker compose -p jamolxon-edge -f "$HERE/docker-compose.edge.yml" up -d
   docker exec jamolxon-caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile 2>/dev/null || true
