@@ -25,6 +25,7 @@ from app.core.ratelimit import client_ip, hit, peek, reset
 from app.core.security import (
     create_access_token,
     create_pre_auth_token,
+    csrf_token_for,
     decode_token,
     decrypt,
     dummy_verify,
@@ -32,7 +33,6 @@ from app.core.security import (
     hash_ip,
     hash_password,
     new_backup_codes,
-    new_csrf_token,
     new_opaque_token,
     new_totp_secret,
     sha256_hex,
@@ -75,7 +75,7 @@ async def issue_session(session: DB, response: Response, user: User, request: Re
     _cookie(response, ACCESS_COOKIE, create_access_token(user.id, user.role, family), s.access_token_minutes * 60,
             "/api/v1/admin")
     _cookie(response, REFRESH_COOKIE, raw, s.refresh_token_days * 86400, "/api/v1/admin/auth")
-    _cookie(response, CSRF_COOKIE, new_csrf_token(), s.refresh_token_days * 86400, "/", httponly=False)
+    _cookie(response, CSRF_COOKIE, csrf_token_for(family), s.refresh_token_days * 86400, "/", httponly=False)
 
 
 async def revoke_user_sessions(session: DB, user_id: uuid.UUID) -> None:

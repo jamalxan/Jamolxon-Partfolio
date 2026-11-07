@@ -58,3 +58,34 @@ async def test_alert_text_is_html_escaped(monkeypatch: pytest.MonkeyPatch) -> No
     monkeypatch.setattr(notify, "send_telegram", fake_send)
     await send_alert({}, 'Taklif (<a href="https://evil.example">bosing</a>)')
     assert sent == ['Taklif (&lt;a href="https://evil.example"&gt;bosing&lt;/a&gt;)']
+
+
+async def test_planted_csrf_cookie_is_rejected(client: Any, owner: Any) -> None:
+    """A sibling subdomain can plant jx_csrf=<anything>; the header must still match the session-bound token."""
+    from tests.conftest import csrf
+
+    real = csrf(client)
+    client.cookies.set("jx_csrf", "attacker-chosen")
+    body = {"slug": "csrf-test", "title": "CSRF"}
+    r = await client.post("/api/v1/admin/categories", json=body, headers={"X-CSRF-Token": "attacker-chosen"})
+    assert r.status_code == 403 and r.json()["type"] == "csrf_failed"
+    assert (await client.post("/api/v1/admin/categories", json=body, headers=real)).status_code == 201
+
+
+async def test_public_cache_ignores_junk_query_params(client: Any) -> None:
+    from app.core.redis import get_redis
+
+    for i in range(5):
+        assert (await client.get(f"/api/v1/projects?junk={i}&page=1")).status_code == 200
+    assert (await client.get("/api/v1/posts?q=salom")).status_code == 200
+    keys = [k async for k in get_redis().scan_iter("pub:*")]
+    assert len(keys) == 1, keys  # one key for projects page 1; junk params and free-text search add nothing
+
+
+async def test_openapi_hidden_on_staging(monkeypatch: pytest.MonkeyPatch) -> None:
+    from app.core.config import get_settings
+    from app.main import create_app
+
+    monkeypatch.setattr(get_settings(), "env", "staging")
+    app = create_app()
+    assert app.openapi_url is None and app.docs_url is None

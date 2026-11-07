@@ -97,7 +97,8 @@ class Settings(BaseSettings):
 
     @property
     def openapi_enabled(self) -> bool:
-        return self.env != "production"
+        # Staging is publicly reachable too: the API schema is only exposed in local dev and tests.
+        return self.env in ("local", "test")
 
 
 @lru_cache

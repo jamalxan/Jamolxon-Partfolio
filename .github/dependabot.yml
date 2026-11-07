@@ -1,0 +1,8 @@
+# Keeps SHA-pinned GitHub Actions current (security review 2026-11-07).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
+    groups:
+      actions: { patterns: ["*"] }

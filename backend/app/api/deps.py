@@ -11,7 +11,7 @@ from app.core.db import get_session
 from app.core.errors import Problem
 from app.core.logging import user_id_var
 from app.core.redis import get_redis
-from app.core.security import csrf_matches, decode_token
+from app.core.security import csrf_valid, decode_token
 from app.models import User
 
 DB = Annotated[AsyncSession, Depends(get_session)]
@@ -51,10 +51,13 @@ CurrentUser = Annotated[User, Depends(current_user)]
 
 
 async def csrf_protect(request: Request) -> None:
-    """Double-submit cookie check on every state-changing admin request (TZ 8)."""
+    """CSRF check on every state-changing admin request (TZ 8): the X-CSRF-Token header must equal the token
+    derived from this session's family (signed double submit), not merely whatever the jx_csrf cookie holds."""
     if request.method in SAFE_METHODS:
         return
-    if not csrf_matches(request.cookies.get(CSRF_COOKIE), request.headers.get("x-csrf-token")):
+    token = request.cookies.get(ACCESS_COOKIE)
+    data = decode_token(token, "access") if token else None
+    if not csrf_valid(data["fam"] if data else None, request.headers.get("x-csrf-token")):
         raise Problem(403, "csrf_failed")
 
 

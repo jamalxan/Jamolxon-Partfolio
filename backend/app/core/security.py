@@ -155,12 +155,16 @@ def hash_ip(ip: str) -> str:
     return hmac.new(salt.encode(), ip.encode(), hashlib.sha256).hexdigest()
 
 
-def new_csrf_token() -> str:
-    return secrets.token_urlsafe(32)
+def csrf_token_for(session_family: uuid.UUID | str) -> str:
+    """CSRF token bound to the login session (HMAC of its family id). The SPA reads it from the jx_csrf cookie
+    and echoes it in X-CSRF-Token; a cookie planted by another subdomain cannot produce the right value."""
+    return sign(f"csrf:{session_family}")
 
 
-def csrf_matches(cookie_value: str | None, header_value: str | None) -> bool:
-    return bool(cookie_value and header_value and hmac.compare_digest(cookie_value, header_value))
+def csrf_valid(session_family: str | None, header_value: str | None) -> bool:
+    if not session_family or not header_value:
+        return False
+    return hmac.compare_digest(csrf_token_for(session_family), header_value)
 
 
 def sign(value: str) -> str:

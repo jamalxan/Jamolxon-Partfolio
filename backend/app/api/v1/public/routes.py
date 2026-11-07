@@ -6,7 +6,7 @@ import json
 import logging
 import uuid
 from typing import Any
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, urlencode
 
 from fastapi import APIRouter, Query, Request, Response
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
@@ -36,13 +36,18 @@ def _json(data: Any) -> bytes:
     return json.dumps(data, ensure_ascii=False, default=str, separators=(",", ":")).encode()
 
 
-async def cached(request: Request, build: Any) -> Response:
-    key = "pub:" + request.url.path + "?" + str(request.url.query)
+async def cached(request: Request, build: Any, params: dict[str, Any] | None = None, *,
+                 store: bool = True) -> Response:
+    """The Redis key is built from the path and the endpoint's VALIDATED params only, never the raw query string:
+    arbitrary ?x=N would otherwise create unbounded keys and evict rate-limit entries (same volatile-lru Redis)."""
+    query = urlencode(sorted((k, str(v)) for k, v in (params or {}).items() if v is not None))
+    key = "pub:" + request.url.path + "?" + query
     r = get_redis()
-    body = await r.get(key)
+    body = await r.get(key) if store else None
     if body is None:
         body = _json(await build()).decode()
-        await r.set(key, body, ex=CACHE_TTL)
+        if store:
+            await r.set(key, body, ex=CACHE_TTL)
     etag = '"' + hashlib.sha1(body.encode(), usedforsecurity=False).hexdigest() + '"'
     headers = {"ETag": etag, "Cache-Control": PUBLIC_CACHE}
     if request.headers.get("if-none-match") == etag:
@@ -84,7 +89,7 @@ def project_card(p: Project) -> dict[str, Any]:
 
 @router.get("/projects")
 async def projects(request: Request, session: DB, category: str | None = Query(None, max_length=40),
-                   featured: bool | None = None, page: int = Query(1, ge=1),
+                   featured: bool | None = None, page: int = Query(1, ge=1, le=500),
                    limit: int = Query(12, ge=1, le=50)) -> Response:
     async def build() -> dict[str, Any]:
         stmt = c.published(select(Project), Project)
@@ -96,7 +101,7 @@ async def projects(request: Request, session: DB, category: str | None = Query(N
         rows = (await session.scalars(stmt.order_by(Project.sort_order).offset((page - 1) * limit).limit(limit))).unique().all()
         return {"items": [project_card(p) for p in rows], "total": total, "page": page, "limit": limit}
 
-    return await cached(request, build)
+    return await cached(request, build, {"category": category, "featured": featured, "page": page, "limit": limit})
 
 
 @router.get("/projects/{slug}")
@@ -130,7 +135,7 @@ async def service(slug: str, request: Request, session: DB) -> Response:
 
 @router.get("/posts")
 async def posts(request: Request, session: DB, tag: str | None = Query(None, max_length=60),
-                q: str | None = Query(None, max_length=100), page: int = Query(1, ge=1),
+                q: str | None = Query(None, max_length=100), page: int = Query(1, ge=1, le=500),
                 limit: int = Query(12, ge=1, le=50)) -> Response:
     async def build() -> dict[str, Any]:
         stmt = c.published(select(Post), Post)
@@ -148,7 +153,8 @@ async def posts(request: Request, session: DB, tag: str | None = Query(None, max
             items.append(d)
         return {"items": items, "total": total, "page": page, "limit": limit}
 
-    return await cached(request, build)
+    # Free-text search results are not cached: every distinct q would be a new key.
+    return await cached(request, build, {"tag": tag, "page": page, "limit": limit}, store=not q)
 
 
 @router.get("/posts/{slug}")
